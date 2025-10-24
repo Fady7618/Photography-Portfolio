@@ -1,26 +1,38 @@
 @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@import url('https://fonts.googleapis.com/css2?family=Plaster&family=Rubik+Dirt&display=swap');
+/* ...existing code... */
+body, html {
+  margin: 0;
+  padding: 0;
+  text-transform: capitalize;
+}
+::-webkit-scrollbar {
+  width: 12px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+::-webkit-scrollbar-track {
+  background: rgb(255, 237, 213); /* orange-100 equivalent */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+::-webkit-scrollbar-thumb {
+  background-color: rgb(154, 52, 18); /* orange-800 equivalent */
+  border-radius: 6px;
+  border: 3px solid rgb(255, 237, 213); /* orange-100 equivalent */
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(194, 65, 12); /* orange-700 equivalent */
+}
+/* #9C440B 
+  #F1E5D1
+*/
+.plasterFont {
+  font-family: "Plaster", system-ui;
+  font-weight: 400;
+  font-style: normal;
+}
+.rubik-dirtFont {
+  font-family: "Rubik Dirt", system-ui;
+  font-weight: 400;
+  font-style: normal;
 }
