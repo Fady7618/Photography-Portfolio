@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model GalleryImage {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  imageUrl    String   // Cloudinary URL
+  publicId    String   // Cloudinary public ID for transformations
+  width       Int
+  height      Int
+  category    String   // e.g., "wedding", "portrait", "event"
+  tags        String[] // Array of tags for filtering (native MongoDB array)
+  featured    Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  weddingId   String?  @db.ObjectId
+  // Remove the relation for now to avoid transaction issues
+  // wedding     Wedding? @relation("WeddingImages", fields: [weddingId], references: [id])
+
+  @@map("gallery_images")
+}
+
+model Wedding {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  coupleName  String
+  weddingDate DateTime
+  location    String
+  description String?
+  coverImage  String?  // Main cover photo URL
+  isPublic    Boolean  @default(true) // Whether to show in gallery
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Remove the back-relation for now
+  // images      GalleryImage[] @relation("WeddingImages")
+
+  @@map("weddings")
+}

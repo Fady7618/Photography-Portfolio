@@ -34,9 +34,9 @@ function Sidebar() {
             <span>home</span>
           </Link>
           <Link
-            href="/gallery"
+            href="/pages/gallery"
             className={`p-2 rounded-lg flex flex-col text-sm lg:text-lg justify-center items-center transition-colors
-                      ${activePath === '/gallery' 
+                      ${activePath === '/pages/gallery' 
                         ? 'bg-orange-100' 
                         : 'text-white'}`}
             title='Gallery'>

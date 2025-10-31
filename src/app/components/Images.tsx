@@ -31,7 +31,7 @@ function Images({ showcaseRef }: ImagesProps) {
     
   return (
     <div className="w-full h-full relative overflow-hidden z-0" ref={containerRef}>
-      <div className="absolute top-0 left-0 lg:left-10 -rotate-5 size-30 lg:size-60 border-8 border-white shadow-[10px_5px_15px_rgba(0,0,0,0.65)]">
+      <div className="absolute top-0 lg:top-5 left-0 lg:left-10 z-10 -rotate-5 size-30 lg:size-60 border-8 border-white shadow-[10px_5px_15px_rgba(0,0,0,0.65)]">
         <img src="/wedding1.jpg" alt="" className="w-full h-full object-cover" />
       </div>
 

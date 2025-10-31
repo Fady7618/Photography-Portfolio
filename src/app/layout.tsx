@@ -2,6 +2,7 @@
 
 // @ts-ignore
 import './globals.css';
+import { Plaster, Rubik_Dirt } from "next/font/google";
 import { useEffect, useRef } from 'react';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
@@ -10,6 +11,18 @@ import ScrollTrigger from 'gsap/ScrollTrigger';
 import ScrollSmoother from 'gsap/ScrollSmoother';
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+
+const plaster = Plaster({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-plaster",
+});
+
+const rubikDirt = Rubik_Dirt({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-rubik-dirt",
+});
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const sidebarRef = useRef(null);
@@ -63,7 +76,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   }, []);
 
   return (
-    <html lang="en">
+    <html lang="en" className={`${plaster.variable} ${rubikDirt.variable}`}>
       <head>
         <link rel="icon" type="image/svg+xml" href="/logo.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />

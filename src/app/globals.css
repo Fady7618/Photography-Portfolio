@@ -26,7 +26,7 @@ body, html {
 /* #9C440B 
   #F1E5D1
 */
-.plasterFont {
+/* .plasterFont {
   font-family: "Plaster", system-ui;
   font-weight: 400;
   font-style: normal;
@@ -35,4 +35,12 @@ body, html {
   font-family: "Rubik Dirt", system-ui;
   font-weight: 400;
   font-style: normal;
+} */
+
+.plasterFont {
+  font-family: var(--font-plaster);
+}
+
+.rubik-dirtFont {
+  font-family: var(--font-rubik-dirt);
 }
