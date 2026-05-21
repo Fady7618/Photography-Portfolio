@@ -4,8 +4,8 @@
 import './globals.css';
 import { Plaster, Rubik_Dirt } from "next/font/google";
 import { useEffect, useRef } from 'react';
-import Navbar from './components/Navbar';
-import Sidebar from './components/Sidebar';
+import Navbar from '@/components/Navbar';
+import Sidebar from '@/components/Sidebar';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import ScrollSmoother from 'gsap/ScrollSmoother';

@@ -1,80 +1,23 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/app/lib/prisma';
-import { GalleryFilters } from '@/app/types/image';
+import { NextRequest } from 'next/server'
+import { GalleryService } from '@/services/gallery.service'
+import { handleApiError, successResponse, AppError } from '@/lib/api-helpers'
 
-export async function GET(request: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    
-    const filters: GalleryFilters = {
-      category: searchParams.get('category') || undefined,
-      featured: searchParams.get('featured') === 'true' ? true : undefined,
-      page: parseInt(searchParams.get('page') || '1'),
-      limit: parseInt(searchParams.get('limit') || '20'),
-    };
+    const token = req.nextUrl.searchParams.get('token')
 
-    const skip = ((filters.page || 1) - 1) * (filters.limit || 20);
-
-    // Build where clause for MongoDB
-    const where: any = {};
-    
-    if (filters.category) {
-      where.category = filters.category;
-    }
-    
-    if (filters.featured !== undefined) {
-      where.featured = filters.featured;
+    if (!token) {
+      throw new AppError('Token required', 400)
     }
 
-    // MongoDB supports array operations natively
-    if (filters.tags && filters.tags.length > 0) {
-      where.tags = {
-        hasSome: filters.tags // MongoDB array contains operation
-      };
-    }
+    const session = await GalleryService.verifyToken(token)
+    const files = await GalleryService.getSessionFiles(session.folder_path)
 
-    // Get total count for pagination
-    const totalCount = await prisma.galleryImage.count({ where });
-    
-    // Get images with pagination (without wedding relation for now)
-    const images = await prisma.galleryImage.findMany({
-      where,
-      // Remove the include for now since wedding relation is commented out
-      // include: {
-      //   wedding: {
-      //     select: {
-      //       id: true,
-      //       coupleName: true,
-      //       weddingDate: true,
-      //       location: true,
-      //     },
-      //   },
-      // },
-      orderBy: [
-        { featured: 'desc' },
-        { sortOrder: 'asc' },
-        { createdAt: 'desc' },
-      ],
-      skip,
-      take: filters.limit || 20,
-    });
-
-    const totalPages = Math.ceil(totalCount / (filters.limit || 20));
-    const currentPage = filters.page || 1;
-
-    return NextResponse.json({
-      images,
-      totalCount,
-      totalPages,
-      currentPage,
-      hasNextPage: currentPage < totalPages,
-      hasPreviousPage: currentPage > 1,
-    });
+    return successResponse({
+      session: { client_name: session.client_name },
+      files,
+    })
   } catch (error) {
-    console.error('Gallery API Error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch gallery images' },
-      { status: 500 }
-    );
+    return handleApiError(error)
   }
 }
