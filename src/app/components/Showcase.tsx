@@ -29,7 +29,7 @@ function Showcase({ priceRef }: ShowcaseProps) {
     })
   },[priceRef])
   return (
-    <div className="w-full h-full flex flex-col p-4">
+    <div className="w-full h-full flex flex-col p-4 bg-red-400">
       <div className="w-full h-1/4 flex justify-center items-center">
         <h1 className="text-4xl lg:text-7xl xl:text-8xl text-end lg:text-start font-bold rubik-dirtFont">Lorem ipsum dolor sit.</h1>
       </div>

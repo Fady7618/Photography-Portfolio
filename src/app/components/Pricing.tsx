@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 function Pricing() {
   return (
-    <div className='w-full h-full flex flex-col lg:flex-row justify-between items-center gap-3 px-4 my-2'>
+    <div className='w-full h-screen flex flex-col lg:flex-row justify-between items-center gap-3 px-4 my-2 '>
       {/* Left Section */}
       <div className="w-full lg:w-1/3 h-full text-center lg:text-start flex flex-col justify-center items-center lg:items-start gap-5">
         <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-start uppercase rubik-dirtFont">intax fujifilm</h2>
