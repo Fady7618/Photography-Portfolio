@@ -16,7 +16,7 @@ function Pricing() {
       </div>
       
       {/* Right Section */}
-      <div className="w-full lg:w-1/3 h-full py-1 flex flex-col items-center gap-2">
+      <div className="w-full lg:w-1/3 h-auto py-1 flex flex-col items-center gap-2 bg-red-300">
         <div className="w-full h-1/3 border-3 p-3 flex flex-col justify-center border-zinc-900 hover:bg-zinc-900 hover:text-white transition-colors">
           <h3 className='font-bold text-2xl'>Price</h3>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe, laudantium.</p>
