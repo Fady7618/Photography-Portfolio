@@ -53,6 +53,7 @@ const CircularText: React.FC<CircularTextProps> = ({
       scale: 1,
       transition: getTransition(spinDuration, start),
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spinDuration, text, onHover, controls]);
 
   const handleHoverStart = () => {

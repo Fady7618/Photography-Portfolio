@@ -64,7 +64,7 @@ const CurvedLoop: FC<CurvedLoopProps> = ({
     if (textPathRef.current) {
       const initial = -spacing;
       textPathRef.current.setAttribute("startOffset", initial + "px");
-      setOffset(initial);
+      queueMicrotask(() => setOffset(initial));
     }
   }, [spacing]);
 

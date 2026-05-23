@@ -1,18 +1,20 @@
-import { useState, useEffect } from 'react';
-import { GalleryImage, PaginationData, GalleryFilters } from '@/types/image';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { PaginationData, GalleryFilters } from '@/types/image';
 
 export function useImageLoader(initialFilters: GalleryFilters = {}) {
   const [data, setData] = useState<PaginationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<GalleryFilters>(initialFilters);
+  const filtersRef = useRef(filters);
+  filtersRef.current = filters;
 
-  const fetchImages = async (newFilters: GalleryFilters = {}) => {
+  const fetchImages = useCallback(async (newFilters: GalleryFilters = {}) => {
     try {
       setLoading(true);
       setError(null);
       
-      const mergedFilters = { ...filters, ...newFilters };
+      const mergedFilters = { ...filtersRef.current, ...newFilters };
       const searchParams = new URLSearchParams();
       
       Object.entries(mergedFilters).forEach(([key, value]) => {
@@ -35,11 +37,11 @@ export function useImageLoader(initialFilters: GalleryFilters = {}) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchImages();
-  }, []);
+  }, [fetchImages]);
 
   const loadNextPage = () => {
     if (data?.hasNextPage) {

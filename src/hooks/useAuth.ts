@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase'
 import { Profile } from '@/types'
 import { User } from '@supabase/supabase-js'
@@ -18,7 +18,7 @@ export function useAuth() {
     loading: true,
   })
 
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
     async function loadUser() {
@@ -57,7 +57,7 @@ export function useAuth() {
     return () => {
       subscription.unsubscribe()
     }
-  }, [])
+  }, [supabase])
 
   async function signOut(): Promise<void> {
     await supabase.auth.signOut()

@@ -13,10 +13,9 @@ function GalleryContent() {
   const urlToken = searchParams.get('token')
   const { user, loading: authLoading } = useAuth()
 
-  const [token, setToken] = useState<string | null>(urlToken)
   const [files, setFiles] = useState<SessionFile[]>([])
   const [clientName, setClientName] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(Boolean(urlToken))
   const [error, setError] = useState<string | null>(null)
   const [authenticated, setAuthenticated] = useState(false)
   const [selectedSession, setSelectedSession] = useState<ClientSession | null>(null)
@@ -41,7 +40,30 @@ function GalleryContent() {
   }
 
   useEffect(() => {
-    if (urlToken) fetchGallery(urlToken)
+    if (!urlToken) return
+
+    let active = true
+
+    ;(async () => {
+      const res = await fetch(`/api/gallery?token=${encodeURIComponent(urlToken)}`)
+      const data = await res.json()
+      if (!active) return
+
+      if (!res.ok) {
+        setError(data.error || 'Invalid token')
+        setLoading(false)
+        return
+      }
+
+      setFiles(data.files)
+      setClientName(data.session.client_name)
+      setAuthenticated(true)
+      setLoading(false)
+    })()
+
+    return () => {
+      active = false
+    }
   }, [urlToken])
 
   async function handleSessionSelect(session: ClientSession) {
@@ -50,7 +72,6 @@ function GalleryContent() {
   }
 
   function handleTokenSubmit(t: string) {
-    setToken(t)
     fetchGallery(t)
   }
 

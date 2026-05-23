@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import DashboardStats from '@/components/admin/DashboardStats'
 import ReservationTable from '@/components/admin/ReservationTable'
 import { Booking } from '@/types'
@@ -9,7 +9,15 @@ import { showAlert } from '@/utils/alert'
 export default function DashboardPage() {
   const [bookings, setBookings] = useState<Booking[]>([])
   const [loading, setLoading] = useState(true)
-  const [stats, setStats] = useState({ total: 0, pending: 0, confirmed: 0, cancelled: 0 })
+  const stats = useMemo(
+    () => ({
+      total: bookings.length,
+      pending: bookings.filter((b) => b.status === 'pending').length,
+      confirmed: bookings.filter((b) => b.status === 'confirmed').length,
+      cancelled: bookings.filter((b) => b.status === 'cancelled').length,
+    }),
+    [bookings]
+  )
 
   async function loadBookings() {
     setLoading(true)
@@ -20,18 +28,20 @@ export default function DashboardPage() {
   }
 
   useEffect(() => {
-    loadBookings()
-  }, [])
+    let active = true
 
-  useEffect(() => {
-    const newStats = {
-      total: bookings.length,
-      pending: bookings.filter((b) => b.status === 'pending').length,
-      confirmed: bookings.filter((b) => b.status === 'confirmed').length,
-      cancelled: bookings.filter((b) => b.status === 'cancelled').length,
+    ;(async () => {
+      const res = await fetch('/api/admin/bookings')
+      const data = await res.json()
+      if (!active) return
+      setBookings(data.bookings || [])
+      setLoading(false)
+    })()
+
+    return () => {
+      active = false
     }
-    setStats(newStats)
-  }, [bookings])
+  }, [])
 
   async function handleCancel(id: string) {
     const confirmed = await showAlert.confirm(

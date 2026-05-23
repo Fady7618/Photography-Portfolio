@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import { BookingService } from '@/services/booking.service'
 import { validateBookingBody } from '@/lib/validators'
 import { handleApiError, successResponse } from '@/lib/api-helpers'

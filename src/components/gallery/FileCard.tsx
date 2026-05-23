@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { SessionFile } from '@/types'
 import { formatBytes } from '@/utils/formatters'
 
@@ -12,11 +13,12 @@ export default function FileCard({ file }: FileCardProps) {
     <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
       {file.type === 'image' && (
         <div className="relative aspect-[4/3] overflow-hidden">
-          <img 
-            src={file.url} 
-            alt={file.name} 
-            loading="lazy"
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+          <Image
+            src={file.url}
+            alt={file.name}
+            fill
+            unoptimized
+            className="object-cover hover:scale-105 transition-transform duration-300"
           />
         </div>
       )}

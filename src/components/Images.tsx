@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import type { RefObject } from "react";
+import Image from "next/image";
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 gsap.registerPlugin(ScrollTrigger);
@@ -27,20 +28,20 @@ function Images({ showcaseRef }: ImagesProps) {
             duration: 1,
             ease: 'power2.inOut'
         });
-    },[])
+    }, [showcaseRef])
     
   return (
     <div className="w-full h-full relative overflow-hidden z-0" ref={containerRef}>
-      <div className="absolute top-0 lg:top-5 left-0 lg:left-10 z-10 -rotate-5 size-30 lg:size-60 border-8 border-white shadow-[10px_5px_15px_rgba(0,0,0,0.65)]">
-        <img src="/wedding1.jpg" alt="" className="w-full h-full object-cover" />
+      <div className="absolute top-0 lg:top-5 left-0 lg:left-10 z-10 -rotate-5 size-30 lg:size-60 border-8 border-white shadow-[10px_5px_15px_rgba(0,0,0,0.65)] overflow-hidden">
+        <Image src="/wedding1.jpg" alt="Wedding photo" fill className="object-cover" />
       </div>
 
-      <div className="absolute top-10 lg:top-20 right-0 lg:right-10 rotate-10 lg:-rotate-10 size-40 lg:size-70 border-8 border-white shadow-[10px_5px_15px_rgba(0,0,0,0.65)]">
-        <img src="/wedding2.webp" alt="" className="w-full h-full object-cover" />
+      <div className="absolute top-10 lg:top-20 right-0 lg:right-10 rotate-10 lg:-rotate-10 size-40 lg:size-70 border-8 border-white shadow-[10px_5px_15px_rgba(0,0,0,0.65)] overflow-hidden">
+        <Image src="/wedding2.webp" alt="Wedding photo" fill className="object-cover" />
       </div>
 
-      <div className="absolute bottom-5 left-10 lg:bottom-0 lg:left-20 rotate-12 size-30 lg:size-50 border-8 border-white shadow-[10px_5px_15px_rgba(0,0,0,0.65)]">
-        <img src="/wedding3.webp" alt="" className="w-full h-full object-cover" />
+      <div className="absolute bottom-5 left-10 lg:bottom-0 lg:left-20 rotate-12 size-30 lg:size-50 border-8 border-white shadow-[10px_5px_15px_rgba(0,0,0,0.65)] overflow-hidden">
+        <Image src="/wedding3.webp" alt="Wedding photo" fill className="object-cover" />
       </div>
     </div>
   )

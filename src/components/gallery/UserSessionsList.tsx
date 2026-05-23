@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ClientSession, SessionFile } from '@/types'
+import { ClientSession } from '@/types'
 import { formatDateShort } from '@/utils/formatters'
 
 interface UserSessionsListProps {
@@ -12,18 +12,22 @@ export default function UserSessionsList({ onSessionSelect }: UserSessionsListPr
   const [sessions, setSessions] = useState<ClientSession[]>([])
   const [loading, setLoading] = useState(true)
 
-  async function loadSessions() {
-    setLoading(true)
-    const res = await fetch('/api/user-sessions')
-    if (res.ok) {
-      const data = await res.json()
-      setSessions(data.sessions)
-    }
-    setLoading(false)
-  }
-
   useEffect(() => {
-    loadSessions()
+    let active = true
+
+    ;(async () => {
+      const res = await fetch('/api/user-sessions')
+      if (!active) return
+      if (res.ok) {
+        const data = await res.json()
+        setSessions(data.sessions)
+      }
+      setLoading(false)
+    })()
+
+    return () => {
+      active = false
+    }
   }, [])
 
   if (loading) {

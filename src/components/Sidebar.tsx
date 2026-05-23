@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Image, Calendar, User, Home, LayoutDashboard } from 'lucide-react'
+import { Image as ImageIcon, Calendar, User, Home, LayoutDashboard } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 
@@ -41,7 +41,7 @@ function Sidebar() {
                         ? 'bg-orange-100' 
                         : 'text-white'}`}
             title='Gallery'>
-            <Image size={24} absoluteStrokeWidth={true}/>
+            <ImageIcon size={24} absoluteStrokeWidth={true}/>
             <span>gallery</span>
           </Link>
           <Link
@@ -100,7 +100,7 @@ function Sidebar() {
                         ? 'bg-orange-100' 
                         : 'text-white hover:bg-orange-600 hover:text-white'}`}
             title='Gallery'>
-            <Image size={24} absoluteStrokeWidth={true}/>
+            <ImageIcon size={24} absoluteStrokeWidth={true}/>
           </Link>
           <Link
             href="/reservation"

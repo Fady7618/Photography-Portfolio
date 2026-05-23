@@ -1,15 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { portfolioImages, PortfolioImage } from '@/data/portfolio'
+import { portfolioImages } from '@/data/portfolio'
 import LazyImage from '@/components/ui/LazyImage'
-import ImageSkeleton from '@/components/ui/ImageSkeleton'
 
 type Category = 'all' | 'wedding' | 'portrait' | 'event'
 
 export default function PortfolioGrid() {
   const [selectedCategory, setSelectedCategory] = useState<Category>('all')
-  const [loading, setLoading] = useState(false)
 
   const filteredImages = selectedCategory === 'all'
     ? portfolioImages
@@ -51,23 +49,17 @@ export default function PortfolioGrid() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {loading ? (
-            Array.from({ length: 6 }).map((_, i) => (
-              <ImageSkeleton key={i} />
-            ))
-          ) : (
-            filteredImages.map(image => (
-              <LazyImage
-                key={image.id}
-                src={image.src}
-                alt={image.title}
-                className="shadow-lg hover:shadow-xl transition-shadow duration-300"
-              />
-            ))
-          )}
+          {filteredImages.map(image => (
+            <LazyImage
+              key={image.id}
+              src={image.src}
+              alt={image.title}
+              className="shadow-lg hover:shadow-xl transition-shadow duration-300"
+            />
+          ))}
         </div>
 
-        {filteredImages.length === 0 && !loading && (
+        {filteredImages.length === 0 && (
           <div className="text-center py-12">
             <p className="text-orange-600 text-lg">No images found in this category</p>
           </div>

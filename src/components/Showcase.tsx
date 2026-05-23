@@ -1,5 +1,6 @@
 import { useEffect , useRef } from "react";
 import type { RefObject } from "react";
+import Image from "next/image";
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 gsap.registerPlugin(ScrollTrigger);
@@ -35,11 +36,12 @@ function Showcase({ priceRef }: ShowcaseProps) {
       </div>
 
       <div className="w-full h-3/4 flex flex-col lg:flex-row justify-center lg:justify-between items-center" ref={containerRef}>
-        <div className="w-full lg:w-1/3 h-full">
-            <img 
-                src="/wedding.webp" 
-                alt="image" 
-                className="w-auto h-auto object-contain"
+        <div className="w-full lg:w-1/3 h-full relative min-h-[200px]">
+            <Image
+                src="/wedding.webp"
+                alt="Wedding showcase"
+                fill
+                className="object-contain"
                 />
         </div>
 

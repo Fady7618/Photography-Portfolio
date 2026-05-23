@@ -1,6 +1,5 @@
 import { createServiceRoleClient } from '@/lib/supabase-server'
 import { Booking } from '@/types'
-import { AppError } from '@/lib/api-helpers'
 
 export const AdminService = {
   async getAllBookings(): Promise<Booking[]> {
