@@ -1,6 +1,5 @@
 'use client';
 
-// @ts-ignore
 import './globals.css';
 import { Plaster, Rubik_Dirt } from "next/font/google";
 import { useEffect, useRef } from 'react';

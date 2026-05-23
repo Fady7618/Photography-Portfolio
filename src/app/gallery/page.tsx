@@ -21,10 +21,6 @@ function GalleryContent() {
   const [authenticated, setAuthenticated] = useState(false)
   const [selectedSession, setSelectedSession] = useState<ClientSession | null>(null)
 
-  useEffect(() => {
-    if (urlToken) fetchGallery(urlToken)
-  }, [urlToken])
-
   async function fetchGallery(t: string) {
     setLoading(true)
     setError(null)
@@ -43,6 +39,10 @@ function GalleryContent() {
     setAuthenticated(true)
     setLoading(false)
   }
+
+  useEffect(() => {
+    if (urlToken) fetchGallery(urlToken)
+  }, [urlToken])
 
   async function handleSessionSelect(session: ClientSession) {
     setSelectedSession(session)

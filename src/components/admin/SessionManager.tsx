@@ -13,12 +13,14 @@ export default function SessionManager() {
   const [creating, setCreating] = useState(false)
   const supabase = createClient()
 
-  useEffect(() => { loadSessions() }, [])
-
   async function loadSessions() {
     const { data } = await supabase.from('client_sessions').select('*').order('created_at', { ascending: false })
     setSessions(data || [])
   }
+
+  useEffect(() => {
+    loadSessions()
+  }, [])
 
   async function createSession() {
     if (!newSession.client_name || !newSession.client_email) return

@@ -12,10 +12,6 @@ export default function UserSessionsList({ onSessionSelect }: UserSessionsListPr
   const [sessions, setSessions] = useState<ClientSession[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    loadSessions()
-  }, [])
-
   async function loadSessions() {
     setLoading(true)
     const res = await fetch('/api/user-sessions')
@@ -25,6 +21,10 @@ export default function UserSessionsList({ onSessionSelect }: UserSessionsListPr
     }
     setLoading(false)
   }
+
+  useEffect(() => {
+    loadSessions()
+  }, [])
 
   if (loading) {
     return (
@@ -45,7 +45,7 @@ export default function UserSessionsList({ onSessionSelect }: UserSessionsListPr
             No Sessions Yet
           </h2>
           <p className="text-orange-700">
-            You don't have any photo sessions yet. Once the photographer uploads your photos, they will appear here.
+            You don&apos;t have any photo sessions yet. Once the photographer uploads your photos, they will appear here.
           </p>
         </div>
       </div>

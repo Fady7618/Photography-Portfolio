@@ -11,6 +11,14 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState({ total: 0, pending: 0, confirmed: 0, cancelled: 0 })
 
+  async function loadBookings() {
+    setLoading(true)
+    const res = await fetch('/api/admin/bookings')
+    const data = await res.json()
+    setBookings(data.bookings || [])
+    setLoading(false)
+  }
+
   useEffect(() => {
     loadBookings()
   }, [])
@@ -24,14 +32,6 @@ export default function DashboardPage() {
     }
     setStats(newStats)
   }, [bookings])
-
-  async function loadBookings() {
-    setLoading(true)
-    const res = await fetch('/api/admin/bookings')
-    const data = await res.json()
-    setBookings(data.bookings || [])
-    setLoading(false)
-  }
 
   async function handleCancel(id: string) {
     const confirmed = await showAlert.confirm(

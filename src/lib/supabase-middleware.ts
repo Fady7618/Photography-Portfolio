@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { publicEnv } from './env'
 
 export async function updateSession(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
+  const supabaseResponse = NextResponse.next({
     request,
   })
 
