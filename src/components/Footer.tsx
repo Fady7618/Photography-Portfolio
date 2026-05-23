@@ -9,9 +9,7 @@ const SOCIAL_LINKS = [
 
 const CURRENT_YEAR = new Date().getFullYear()
 
-interface FooterProps {}
-
-function Footer(_props: FooterProps = {}) {
+function Footer() {
   return (
     <footer className="w-full border-t-2 border-zinc-900 bg-orange-800 text-orange-100">
       <div className="flex flex-col items-center justify-between gap-4 px-4 py-6 sm:flex-row sm:px-6">
