@@ -1,5 +1,5 @@
 import { Facebook, Instagram, Youtube } from 'lucide-react'
-import packageJson from '../../package.json'
+import { getAppVersion } from '@/lib/version'
 
 const SOCIAL_LINKS = [
   { label: 'Instagram', href: 'https://instagram.com', Icon: Instagram },
@@ -20,7 +20,7 @@ function Footer(_props: FooterProps = {}) {
             &copy; {CURRENT_YEAR} FUJIFILM. All rights reserved.
           </p>
           <span className="rounded-full border border-orange-200/40 bg-orange-900/50 px-2.5 py-0.5 text-xs font-medium text-orange-100">
-            v{packageJson.version}
+            v{getAppVersion()}
           </span>
         </div>
 

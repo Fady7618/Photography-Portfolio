@@ -6,7 +6,12 @@
     "dev": "next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "release:patch": "npm version patch -m \"chore: release v%s\"",
+    "release:minor": "npm version minor -m \"chore: release v%s\"",
+    "release:major": "npm version major -m \"chore: release v%s\"",
+    "release:push": "git push origin main --follow-tags",
+    "verify:version": "node scripts/verify-version.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.3",
