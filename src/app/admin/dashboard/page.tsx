@@ -67,7 +67,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-orange-50 p-8">
+      <div className="min-h-screen bg-orange-100 p-8">
         <div className="max-w-7xl mx-auto">
           <div className="animate-pulse">
             <div className="h-8 bg-orange-200 rounded w-64 mb-6"></div>
@@ -84,7 +84,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-orange-50 p-8">
+    <div className="min-h-screen bg-orange-100 p-8">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-orange-800 mb-6 plasterFont">Reservation Dashboard</h1>
         

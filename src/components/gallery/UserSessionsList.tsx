@@ -28,7 +28,7 @@ export default function UserSessionsList({ onSessionSelect }: UserSessionsListPr
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-orange-50 flex items-center justify-center">
+      <div className="min-h-screen bg-orange-100 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-800 mx-auto mb-4"></div>
           <p className="text-orange-700">Loading your sessions...</p>
@@ -39,7 +39,7 @@ export default function UserSessionsList({ onSessionSelect }: UserSessionsListPr
 
   if (sessions.length === 0) {
     return (
-      <div className="min-h-screen bg-orange-50 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-orange-100 flex items-center justify-center px-4">
         <div className="max-w-md w-full bg-white rounded-xl shadow-xl p-8 text-center">
           <h2 className="text-2xl font-bold text-orange-800 mb-4 plasterFont">
             No Sessions Yet
@@ -53,7 +53,7 @@ export default function UserSessionsList({ onSessionSelect }: UserSessionsListPr
   }
 
   return (
-    <div className="min-h-screen bg-orange-50 py-12 px-4">
+    <div className="min-h-screen bg-orange-100 py-12 px-4">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-4xl font-bold text-orange-800 mb-8 plasterFont text-center">
           Your Photo Sessions
