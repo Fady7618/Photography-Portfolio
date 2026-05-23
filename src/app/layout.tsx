@@ -5,6 +5,7 @@ import { Plaster, Rubik_Dirt } from "next/font/google";
 import { useEffect, useRef } from 'react';
 import Navbar from '@/components/Navbar';
 import Sidebar from '@/components/Sidebar';
+import Footer from '@/components/Footer';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import ScrollSmoother from 'gsap/ScrollSmoother';
@@ -91,6 +92,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </div>
               <main className="relative h-full z-10">
                 {children}
+                <Footer />
               </main>
               <div className="w-full z-50">
                 <Sidebar />
@@ -112,6 +114,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
               <main className="h-full">
                 {children}
+                <Footer />
               </main>
             </div>
           </div>

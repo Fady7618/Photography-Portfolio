@@ -36,12 +36,12 @@ function Showcase({ priceRef }: ShowcaseProps) {
       </div>
 
       <div className="w-full h-3/4 flex flex-col lg:flex-row justify-center lg:justify-between items-center" ref={containerRef}>
-        <div className="w-full lg:w-1/3 h-full relative min-h-[200px]">
+        <div className="w-full lg:w-1/3 h-full relative min-h-[200px] ">
             <Image
                 src="/wedding.webp"
                 alt="Wedding showcase"
                 fill
-                className="object-contain"
+                className="object-contain object-top"
                 />
         </div>
 
