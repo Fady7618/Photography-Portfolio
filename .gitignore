@@ -22,7 +22,21 @@
 
 # misc
 .DS_Store
+Thumbs.db
 *.pem
+
+# IDE / editor
+.cursor/
+.idea/
+*.iml
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# local implementation notes (not needed in repo)
+AUTH_IMPLEMENTATION_COMPLETE.md
+IMPLEMENTATION_COMPLETE.md
+UI_ENHANCEMENT_COMPLETE.md
 
 # debug
 npm-debug.log*

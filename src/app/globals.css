@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Plaster&family=Rubik+Dirt&display=swap');
-/* ...existing code... */
+
 body, html {
   margin: 0;
   padding: 0;
@@ -43,4 +43,86 @@ body, html {
 
 .rubik-dirtFont {
   font-family: var(--font-rubik-dirt);
+}
+
+/* React Day Picker Custom Styles */
+.rdp-custom {
+  --rdp-cell-size: 50px;
+  --rdp-accent-color: #9a3412;
+  --rdp-background-color: #ffedd5;
+  --rdp-accent-color-dark: #7c2d12;
+  --rdp-background-color-dark: #fed7aa;
+  --rdp-outline: 2px solid var(--rdp-accent-color);
+  --rdp-outline-selected: 2px solid var(--rdp-accent-color);
+  margin: 0;
+}
+
+.rdp-custom .rdp-month {
+  width: 100%;
+}
+
+.rdp-custom .rdp-caption {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.rdp-custom .rdp-caption_label {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #9a3412;
+}
+
+.rdp-custom .rdp-head_cell {
+  color: #9a3412;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.5rem;
+}
+
+.rdp-custom .rdp-cell {
+  padding: 0.25rem;
+}
+
+.rdp-custom .rdp-day {
+  width: var(--rdp-cell-size);
+  height: var(--rdp-cell-size);
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.rdp-custom .rdp-day:hover:not(.rdp-day_disabled):not(.rdp-day_selected) {
+  background-color: #fed7aa;
+  color: #9a3412;
+}
+
+.rdp-custom .rdp-day_selected {
+  background-color: #9a3412 !important;
+  color: white !important;
+  font-weight: 600;
+}
+
+.rdp-custom .rdp-day_disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.rdp-custom .rdp-day_today:not(.rdp-day_selected) {
+  font-weight: 700;
+  color: #9a3412;
+  background-color: #ffedd5;
+}
+
+.rdp-custom .rdp-nav_button {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.375rem;
+  color: #9a3412;
+  transition: all 0.2s;
+}
+
+.rdp-custom .rdp-nav_button:hover {
+  background-color: #fed7aa;
 }

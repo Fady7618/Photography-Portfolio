@@ -1,10 +1,10 @@
 "use client";
 
-import Hero from './components/Hero';
-import Pricing from './components/Pricing';
-import Showcase from './components/Showcase';
-import Images from './components/Images';
-import Camera from './components/Camera';
+import Hero from '@/components/Hero';
+import Pricing from '@/components/Pricing';
+import Showcase from '@/components/Showcase';
+import Images from '@/components/Images';
+import Camera from '@/components/Camera';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useEffect, useRef} from 'react';
