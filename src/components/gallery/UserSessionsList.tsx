@@ -57,32 +57,21 @@ export default function UserSessionsList({ onSessionSelect }: UserSessionsListPr
   }
 
   return (
-    <div className="min-h-screen bg-orange-100 py-12 px-4">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold text-orange-800 mb-8 plasterFont text-center">
-          Your Photo Sessions
-        </h1>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {sessions.map((session) => (
-            <button
-              key={session.id}
-              onClick={() => onSessionSelect(session)}
-              className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow p-6 text-left"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-semibold text-orange-800">{session.client_name}</h3>
-              </div>
-              <p className="text-sm text-orange-600 mb-2">
-                Created: {formatDateShort(session.created_at)}
-              </p>
-              <p className="text-sm text-orange-500">
-                Click to view photos
-              </p>
-            </button>
-          ))}
-        </div>
-      </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {sessions.map((session) => (
+        <button
+          key={session.id}
+          type="button"
+          onClick={() => onSessionSelect(session)}
+          className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow p-6 text-left"
+        >
+          <h3 className="text-xl font-semibold text-orange-800 mb-4">{session.client_name}</h3>
+          <p className="text-sm text-orange-600 mb-2">
+            Created: {formatDateShort(session.created_at)}
+          </p>
+          <p className="text-sm text-orange-500">Click to view photos</p>
+        </button>
+      ))}
     </div>
   )
 }

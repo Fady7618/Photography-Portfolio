@@ -1,5 +1,10 @@
 import { createServiceRoleClient } from '@/lib/supabase-server'
-import { Booking } from '@/types'
+import { Booking, ClientSession } from '@/types'
+
+export type CreateSessionInput = {
+  client_name: string
+  client_email: string
+}
 
 export const AdminService = {
   async getAllBookings(): Promise<Booking[]> {
@@ -29,6 +34,50 @@ export const AdminService = {
       .from('bookings')
       .delete()
       .neq('id', '00000000-0000-0000-0000-000000000000')
+
+    if (error) throw new Error(error.message)
+  },
+
+  async getAllSessions(): Promise<ClientSession[]> {
+    const supabase = createServiceRoleClient()
+    const { data, error } = await supabase
+      .from('client_sessions')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (error) throw new Error(error.message)
+    return data || []
+  },
+
+  async createSession(input: CreateSessionInput): Promise<ClientSession> {
+    const supabase = createServiceRoleClient()
+    const slug = `${input.client_name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`
+    const folderPath = `sessions/${slug}`
+
+    const { data, error } = await supabase
+      .from('client_sessions')
+      .insert({
+        client_name: input.client_name,
+        client_email: input.client_email,
+        folder_path: folderPath,
+      })
+      .select()
+      .single()
+
+    if (error) throw new Error(error.message)
+    if (!data) throw new Error('Failed to create session')
+    return data
+  },
+
+  async uploadSessionFile(
+    folderPath: string,
+    fileName: string,
+    file: Blob
+  ): Promise<void> {
+    const supabase = createServiceRoleClient()
+    const { error } = await supabase.storage
+      .from('sessions')
+      .upload(`${folderPath}/${fileName}`, file, { upsert: true })
 
     if (error) throw new Error(error.message)
   },

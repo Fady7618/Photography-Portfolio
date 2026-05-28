@@ -22,34 +22,42 @@ export function useAuth() {
 
   useEffect(() => {
     async function loadUser() {
-      const { data: { user } } = await supabase.auth.getUser()
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
 
-      if (!user) {
+        if (!user) {
+          setState({ user: null, profile: null, loading: false })
+          return
+        }
+
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single()
+
+        setState({ user, profile, loading: false })
+      } catch {
         setState({ user: null, profile: null, loading: false })
-        return
       }
-
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single()
-
-      setState({ user, profile, loading: false })
     }
 
     loadUser()
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session?.user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single()
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      try {
+        if (session?.user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single()
 
-        setState({ user: session.user, profile, loading: false })
-      } else {
+          setState({ user: session.user, profile, loading: false })
+        } else {
+          setState({ user: null, profile: null, loading: false })
+        }
+      } catch {
         setState({ user: null, profile: null, loading: false })
       }
     })

@@ -79,7 +79,7 @@ function Navbar() {
                       )}
                       <button
                         onClick={handleSignOut}
-                        className="w-full flex items-center space-x-2 px-4 py-2 text-orange-800 hover:bg-orange-50 transition-colors"
+                        className="w-full flex items-center space-x-2 px-4 py-2 text-orange-800 hover:bg-orange-50 transition-colors cursor-pointer"
                       >
                         <LogOut className="h-4 w-4" />
                         <span>Sign Out</span>

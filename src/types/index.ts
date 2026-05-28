@@ -21,7 +21,7 @@ export type ClientSession = {
   access_token: string
   token_expires_at: string | null
   created_at: string
-  user_id?: string
+  user_id: string | null
 }
 
 export type SessionFile = {

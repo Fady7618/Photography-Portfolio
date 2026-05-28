@@ -108,11 +108,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Sidebar />
               </div>
 
-              <div className="flex flex-col items-center justify-center" ref={navbarRef}>
+              <div className="relative z-50 flex flex-col items-center justify-center" ref={navbarRef}>
                 <Navbar />
               </div>
 
-              <main className="h-full">
+              <main className="relative z-0 h-full">
                 {children}
                 <Footer />
               </main>

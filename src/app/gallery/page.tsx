@@ -1,126 +1,48 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
-import { TokenGate, GalleryGrid } from '@/components/gallery'
+import { useEffect, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import PortfolioGrid from '@/components/gallery/PortfolioGrid'
-import UserSessionsList from '@/components/gallery/UserSessionsList'
-import { SessionFile, ClientSession } from '@/types'
 import { useAuth } from '@/hooks/useAuth'
 
 function GalleryContent() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const urlToken = searchParams.get('token')
-  const { user, loading: authLoading } = useAuth()
-
-  const [files, setFiles] = useState<SessionFile[]>([])
-  const [clientName, setClientName] = useState('')
-  const [loading, setLoading] = useState(Boolean(urlToken))
-  const [error, setError] = useState<string | null>(null)
-  const [authenticated, setAuthenticated] = useState(false)
-  const [selectedSession, setSelectedSession] = useState<ClientSession | null>(null)
-
-  async function fetchGallery(t: string) {
-    setLoading(true)
-    setError(null)
-
-    const res = await fetch(`/api/gallery?token=${encodeURIComponent(t)}`)
-    const data = await res.json()
-
-    if (!res.ok) {
-      setError(data.error || 'Invalid token')
-      setLoading(false)
-      return
-    }
-
-    setFiles(data.files)
-    setClientName(data.session.client_name)
-    setAuthenticated(true)
-    setLoading(false)
-  }
 
   useEffect(() => {
-    if (!urlToken) return
-
-    let active = true
-
-    ;(async () => {
-      const res = await fetch(`/api/gallery?token=${encodeURIComponent(urlToken)}`)
-      const data = await res.json()
-      if (!active) return
-
-      if (!res.ok) {
-        setError(data.error || 'Invalid token')
-        setLoading(false)
-        return
-      }
-
-      setFiles(data.files)
-      setClientName(data.session.client_name)
-      setAuthenticated(true)
-      setLoading(false)
-    })()
-
-    return () => {
-      active = false
+    if (urlToken) {
+      router.replace(`/gallery/sessions?token=${encodeURIComponent(urlToken)}`)
     }
-  }, [urlToken])
-
-  async function handleSessionSelect(session: ClientSession) {
-    setSelectedSession(session)
-    fetchGallery(session.access_token)
-  }
-
-  function handleTokenSubmit(t: string) {
-    fetchGallery(t)
-  }
-
-  if (authLoading) {
-    return (
-      <div className="min-h-screen bg-orange-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-800 mx-auto mb-4"></div>
-          <p className="text-orange-700">Loading...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-orange-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-800 mx-auto mb-4"></div>
-          <p className="text-orange-700">Loading your gallery...</p>
-        </div>
-      </div>
-    )
-  }
+  }, [urlToken, router])
 
   if (urlToken) {
-    if (!authenticated) {
-      return <TokenGate onTokenSubmit={handleTokenSubmit} error={error} />
-    }
-    return <GalleryGrid files={files} clientName={clientName} />
+    return (
+      <div className="min-h-screen bg-orange-100 flex items-center justify-center">
+        <p className="text-orange-700">Redirecting...</p>
+      </div>
+    )
   }
 
-  if (user && !urlToken) {
-    if (selectedSession) {
-      return <GalleryGrid files={files} clientName={clientName} />
-    }
-    return <UserSessionsList onSessionSelect={handleSessionSelect} />
-  }
+  return <GalleryPageBody />
+}
 
-  return <PortfolioGrid />
+function GalleryPageBody() {
+  const { isAuthenticated, isAdmin, loading } = useAuth()
+  const showSessionsLink = !loading && isAuthenticated && !isAdmin
+
+  return <PortfolioGrid showSessionsLink={showSessionsLink} />
 }
 
 export default function GalleryPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-orange-100 flex items-center justify-center">
-        <p className="text-orange-700">Loading...</p>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-orange-100 flex items-center justify-center">
+          <p className="text-orange-700">Loading...</p>
+        </div>
+      }
+    >
       <GalleryContent />
     </Suspense>
   )
