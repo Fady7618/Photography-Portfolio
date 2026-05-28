@@ -53,7 +53,8 @@ body, html {
   --rdp-accent-color: #9a3412;
   --rdp-accent-background-color: #ffedd5;
   --rdp-today-color: #9a3412;
-  --rdp-selected-border: 2px solid #9a3412;
+  --rdp-selected-border: 2px solid transparent;
+  --rdp-day_button-border: 2px solid transparent;
 
   /* Square cells: scale with card width, stay centered in each column */
   --rdp-day-size: clamp(2.25rem, calc((100% - 1.5rem) / 7), 3rem);
@@ -108,6 +109,13 @@ body, html {
   margin: 0 auto;
   font-weight: 500;
   transition: background-color 0.2s, color 0.2s;
+  outline: none;
+}
+
+.rdp-custom .rdp-day_button:focus,
+.rdp-custom .rdp-day_button:focus-visible {
+  outline: none;
+  box-shadow: none;
 }
 
 .rdp-custom .rdp-day_button:hover:not(:disabled) {
@@ -119,27 +127,32 @@ body, html {
   background-color: #9a3412 !important;
   color: white !important;
   font-weight: 600;
+  border-color: transparent;
+  outline: none;
+  box-shadow: none;
 }
 
-.rdp-custom .rdp-disabled:not(.rdp-pending):not(.rdp-confirmed) .rdp-day_button {
+.rdp-custom .rdp-disabled:not(:has(.rdp-status-pending)):not(:has(.rdp-status-confirmed)) .rdp-day_button {
   opacity: 0.35;
   cursor: not-allowed;
 }
 
-.rdp-custom .rdp-pending,
-.rdp-custom .rdp-confirmed {
+.rdp-custom .rdp-day.rdp-disabled:has(.rdp-status-pending),
+.rdp-custom .rdp-day.rdp-disabled:has(.rdp-status-confirmed) {
   opacity: 1;
 }
 
-.rdp-custom .rdp-pending .rdp-day_button {
-  background-color: #fef3c7;
-  color: #92400e;
+.rdp-custom .rdp-day_button.rdp-status-pending {
+  opacity: 1 !important;
+  background-color: #fef3c7 !important;
+  color: #92400e !important;
   font-weight: 700;
 }
 
-.rdp-custom .rdp-confirmed .rdp-day_button {
-  background-color: #dcfce7;
-  color: #166534;
+.rdp-custom .rdp-day_button.rdp-status-confirmed {
+  opacity: 1 !important;
+  background-color: #dcfce7 !important;
+  color: #166534 !important;
   font-weight: 700;
 }
 

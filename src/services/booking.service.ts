@@ -15,8 +15,8 @@ export const BookingService = {
 
     if (error) throw new Error(error.message)
     return (data ?? []).map((row) => ({
-      date: row.session_date,
-      status: row.status as 'pending' | 'confirmed',
+      date: String(row.session_date).split('T')[0],
+      status: row.status === 'confirmed' ? 'confirmed' : 'pending',
     }))
   },
 

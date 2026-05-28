@@ -9,6 +9,7 @@ type Step = 'calendar' | 'form' | 'success'
 export default function ReservationPage() {
   const [step, setStep] = useState<Step>('calendar')
   const [selectedDate, setSelectedDate] = useState<Date | undefined>()
+  const [bookingsRefresh, setBookingsRefresh] = useState(0)
 
   function handleDateSelect(date: Date) {
     setSelectedDate(date)
@@ -40,7 +41,11 @@ export default function ReservationPage() {
             has been received. You will be contacted to confirm.
           </p>
           <button 
-            onClick={() => { setStep('calendar'); setSelectedDate(undefined) }}
+            onClick={() => {
+              setSelectedDate(undefined)
+              setBookingsRefresh((n) => n + 1)
+              setStep('calendar')
+            }}
             className="w-full bg-orange-800 hover:bg-orange-900 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
           >
             Book Another Date
@@ -66,6 +71,7 @@ export default function ReservationPage() {
           <BookingCalendar
             onDateSelect={handleDateSelect}
             selectedDate={selectedDate}
+            refreshTrigger={bookingsRefresh}
           />
         )}
 
@@ -77,9 +83,13 @@ export default function ReservationPage() {
                 'Booking Confirmed!',
                 'Your reservation has been submitted successfully.'
               )
+              setBookingsRefresh((n) => n + 1)
               setStep('success')
             }}
-            onCancel={() => setStep('calendar')}
+            onCancel={() => {
+              setSelectedDate(undefined)
+              setStep('calendar')
+            }}
           />
         )}
       </div>

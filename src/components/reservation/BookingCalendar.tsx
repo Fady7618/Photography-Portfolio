@@ -1,42 +1,74 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
-import { DayPicker } from 'react-day-picker'
+import { useState, useEffect, useMemo, useCallback } from 'react'
+import { DayButton, DayPicker, type DayButtonProps } from 'react-day-picker'
 import 'react-day-picker/dist/style.css'
+import { toISODate } from '@/utils/formatters'
 
-type BookedDateEntry = {
-  date: Date
-  status: 'pending' | 'confirmed'
-}
+type BookingStatus = 'pending' | 'confirmed'
 
 interface BookingCalendarProps {
   onDateSelect: (date: Date) => void
   selectedDate: Date | undefined
+  refreshTrigger?: number
 }
 
-function parseSessionDate(dateStr: string): Date {
-  const [year, month, day] = dateStr.split('-').map(Number)
-  return new Date(year, month - 1, day)
+function StatusDayButton({
+  statusByDate,
+  day,
+  className,
+  ...props
+}: DayButtonProps & { statusByDate: Map<string, BookingStatus> }) {
+  const status = statusByDate.get(toISODate(day.date))
+  const statusClass =
+    status === 'pending'
+      ? 'rdp-status-pending'
+      : status === 'confirmed'
+        ? 'rdp-status-confirmed'
+        : ''
+
+  return (
+    <DayButton
+      day={day}
+      className={[className, statusClass].filter(Boolean).join(' ')}
+      {...props}
+    />
+  )
 }
 
-export default function BookingCalendar({ onDateSelect, selectedDate }: BookingCalendarProps) {
-  const [bookedDates, setBookedDates] = useState<BookedDateEntry[]>([])
+export default function BookingCalendar({
+  onDateSelect,
+  selectedDate,
+  refreshTrigger = 0,
+}: BookingCalendarProps) {
+  const [statusByDate, setStatusByDate] = useState<Map<string, BookingStatus>>(new Map())
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    let active = true
+    setLoading(true)
+
     fetch('/api/bookings')
       .then((res) => res.json())
       .then(({ bookedDates: dates }) => {
-        setBookedDates(
-          (dates ?? []).map((entry: { date: string; status: 'pending' | 'confirmed' }) => ({
-            date: parseSessionDate(entry.date),
-            status: entry.status,
-          }))
-        )
+        if (!active) return
+        const map = new Map<string, BookingStatus>()
+        for (const entry of dates ?? []) {
+          const iso = String(entry.date).split('T')[0]
+          const status = String(entry.status).toLowerCase().trim()
+          map.set(iso, status === 'confirmed' ? 'confirmed' : 'pending')
+        }
+        setStatusByDate(map)
         setLoading(false)
       })
-      .catch(() => setLoading(false))
-  }, [])
+      .catch(() => {
+        if (active) setLoading(false)
+      })
+
+    return () => {
+      active = false
+    }
+  }, [refreshTrigger])
 
   const today = useMemo(() => {
     const d = new Date()
@@ -44,17 +76,19 @@ export default function BookingCalendar({ onDateSelect, selectedDate }: BookingC
     return d
   }, [])
 
-  const pendingDates = useMemo(
-    () => bookedDates.filter((b) => b.status === 'pending').map((b) => b.date),
-    [bookedDates]
+  const isDateBooked = useCallback(
+    (date: Date) => statusByDate.has(toISODate(date)),
+    [statusByDate]
   )
 
-  const confirmedDates = useMemo(
-    () => bookedDates.filter((b) => b.status === 'confirmed').map((b) => b.date),
-    [bookedDates]
+  const components = useMemo(
+    () => ({
+      DayButton: (props: DayButtonProps) => (
+        <StatusDayButton {...props} statusByDate={statusByDate} />
+      ),
+    }),
+    [statusByDate]
   )
-
-  const allBookedDates = useMemo(() => bookedDates.map((b) => b.date), [bookedDates])
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -75,8 +109,8 @@ export default function BookingCalendar({ onDateSelect, selectedDate }: BookingC
             mode="single"
             selected={selectedDate}
             onSelect={(date) => date && onDateSelect(date)}
-            disabled={[{ before: today }, ...allBookedDates]}
-            modifiers={{ pending: pendingDates, confirmed: confirmedDates }}
+            disabled={[{ before: today }, isDateBooked]}
+            components={components}
             className="rdp-custom w-full"
           />
 

@@ -1,6 +1,20 @@
+/** Parse YYYY-MM-DD (or ISO datetime) as local calendar date. */
+export function parseDateOnly(dateString: string): Date {
+  const datePart = String(dateString).split('T')[0]
+  const [year, month, day] = datePart.split('-').map(Number)
+  return new Date(year, month - 1, day, 12, 0, 0)
+}
+
+export function isSameCalendarDay(a: Date, b: Date): boolean {
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  )
+}
+
 function parseDateString(dateString: string): Date {
-  const [year, month, day] = dateString.split('-').map(Number)
-  return new Date(year, month - 1, day)
+  return parseDateOnly(dateString)
 }
 
 export function formatDate(dateString: string): string {
