@@ -27,5 +27,8 @@ export function getServerEnv() {
       'PHOTOGRAPHER_EMAIL',
       process.env.PHOTOGRAPHER_EMAIL
     ),
+    /** Must use a verified domain to email clients. See Resend dashboard → Domains. */
+    resendFromEmail:
+      process.env.RESEND_FROM_EMAIL || 'Fujifilm <onboarding@resend.dev>',
   }
 }

@@ -6,15 +6,18 @@ import { Booking, BookingFormData } from '@/types'
 type BookingInput = BookingFormData & { user_id?: string }
 
 export const BookingService = {
-  async getBookedDates(): Promise<string[]> {
+  async getBookedDates(): Promise<{ date: string; status: 'pending' | 'confirmed' }[]> {
     const supabase = createServiceRoleClient()
     const { data, error } = await supabase
       .from('bookings')
-      .select('session_date')
+      .select('session_date, status')
       .in('status', ['pending', 'confirmed'])
 
     if (error) throw new Error(error.message)
-    return (data ?? []).map((row) => row.session_date)
+    return (data ?? []).map((row) => ({
+      date: row.session_date,
+      status: row.status as 'pending' | 'confirmed',
+    }))
   },
 
   async create(input: BookingInput): Promise<Booking> {

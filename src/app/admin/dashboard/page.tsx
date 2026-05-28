@@ -43,6 +43,26 @@ export default function DashboardPage() {
     }
   }, [])
 
+  async function handleApprove(id: string) {
+    const confirmed = await showAlert.confirm(
+      'Approve Booking?',
+      'This will confirm the reservation and send a confirmation email to the client.'
+    )
+    if (!confirmed) return
+
+    const res = await fetch(`/api/admin/bookings?id=${id}`, { method: 'PATCH' })
+    const data = await res.json().catch(() => ({}))
+    if (res.ok) {
+      await showAlert.success('Booking Approved', 'The booking has been confirmed and the client has been notified.')
+      loadBookings()
+    } else {
+      await showAlert.error(
+        'Approval Failed',
+        typeof data.error === 'string' ? data.error : 'Failed to approve the booking. Please try again.'
+      )
+    }
+  }
+
   async function handleCancel(id: string) {
     const confirmed = await showAlert.confirm(
       'Cancel Booking?',
@@ -102,6 +122,7 @@ export default function DashboardPage() {
         
         <ReservationTable 
           bookings={bookings} 
+          onApprove={handleApprove}
           onCancel={handleCancel} 
           onClearAll={handleClearAll} 
         />

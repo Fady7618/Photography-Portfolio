@@ -1,5 +1,6 @@
 import { createServiceRoleClient } from '@/lib/supabase-server'
-import { Booking, ClientSession } from '@/types'
+import { AppError } from '@/lib/api-helpers'
+import { Booking, BookingStatus, ClientSession } from '@/types'
 
 export type CreateSessionInput = {
   client_name: string
@@ -23,6 +24,31 @@ export const AdminService = {
     const { error } = await supabase
       .from('bookings')
       .update({ status: 'cancelled' })
+      .eq('id', id)
+
+    if (error) throw new Error(error.message)
+  },
+
+  async confirmBooking(id: string): Promise<Booking> {
+    const supabase = createServiceRoleClient()
+    const { data, error } = await supabase
+      .from('bookings')
+      .update({ status: 'confirmed' })
+      .eq('id', id)
+      .eq('status', 'pending')
+      .select()
+      .single()
+
+    if (error) throw new Error(error.message)
+    if (!data) throw new AppError('Booking not found or not pending', 404)
+    return data
+  },
+
+  async setBookingStatus(id: string, status: BookingStatus): Promise<void> {
+    const supabase = createServiceRoleClient()
+    const { error } = await supabase
+      .from('bookings')
+      .update({ status })
       .eq('id', id)
 
     if (error) throw new Error(error.message)

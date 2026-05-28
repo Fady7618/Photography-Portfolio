@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react';
 import Navbar from '@/components/Navbar';
 import Sidebar from '@/components/Sidebar';
 import Footer from '@/components/Footer';
+import { AuthProvider } from '@/context/AuthContext';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import ScrollSmoother from 'gsap/ScrollSmoother';
@@ -83,6 +84,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="theme-color" content="#ea580c" />
       </head>
       <body suppressHydrationWarning={true}>
+        <AuthProvider>
         <div id="smooth-wrapper" className="h-screen overflow-hidden bg-orange-100">
           <div id="smooth-content" ref={containerRef}>
             {/* Mobile Layout */}
@@ -119,6 +121,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </div>
         </div>
+        </AuthProvider>
       </body>
     </html>
   );
