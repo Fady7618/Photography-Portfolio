@@ -1,7 +1,49 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { updateSession } from './src/lib/supabase-middleware'
+import {
+  checkRateLimit,
+  getClientIp,
+  rateLimitConfigs,
+} from './src/lib/rate-limit'
+
+function applyRateLimit(
+  request: NextRequest,
+  pathname: string,
+  configKey: keyof typeof rateLimitConfigs
+): NextResponse | null {
+  if (request.method !== 'POST') return null
+
+  const config = rateLimitConfigs[configKey]
+  const ip = getClientIp(request)
+  const key = `${configKey}:${ip}:${pathname}`
+  const { allowed, retryAfterSeconds } = checkRateLimit(key, config)
+
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      {
+        status: 429,
+        headers: { 'Retry-After': String(retryAfterSeconds) },
+      }
+    )
+  }
+
+  return null
+}
 
 export async function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname
+
+  if (pathname === '/api/bookings') {
+    const rateLimited = applyRateLimit(request, pathname, 'bookings')
+    if (rateLimited) return rateLimited
+  }
+
+  if (pathname === '/api/admin/sessions/upload') {
+    const rateLimited = applyRateLimit(request, pathname, 'upload')
+    if (rateLimited) return rateLimited
+  }
+
   const { supabaseResponse, user, supabase } = await updateSession(request)
 
   const url = request.nextUrl.clone()

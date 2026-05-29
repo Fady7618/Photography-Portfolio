@@ -95,7 +95,6 @@ export default function ImageModal({
           src={image.src}
           alt={image.title}
           fill
-          unoptimized
           className="object-contain"
           sizes="100vw"
           priority

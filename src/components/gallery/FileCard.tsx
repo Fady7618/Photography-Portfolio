@@ -17,7 +17,6 @@ export default function FileCard({ file }: FileCardProps) {
             src={file.url}
             alt={file.name}
             fill
-            unoptimized
             className="object-cover hover:scale-105 transition-transform duration-300"
           />
         </div>

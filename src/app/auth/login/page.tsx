@@ -1,8 +1,13 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import AuthForm from '@/components/auth/AuthForm'
 
-export default function LoginPage() {
-  return (
+export const metadata: Metadata = {
+  title: 'Sign In',
+  description: 'Sign in to book sessions and view your private photo galleries.',
+}
+
+export default function LoginPage() {  return (
     <div className="min-h-screen bg-orange-100 flex items-center justify-center px-4 py-12">
       <div className="max-w-md w-full bg-white rounded-xl shadow-xl p-8">
         <div className="text-center mb-8">

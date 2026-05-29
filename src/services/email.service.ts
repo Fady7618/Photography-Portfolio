@@ -2,6 +2,10 @@ import { createResendClient } from '@/lib/resend'
 import { getServerEnv } from '@/lib/env'
 import { AppError } from '@/lib/api-helpers'
 import { Booking } from '@/types'
+import {
+  buildBookingEmailHtml,
+  buildConfirmationEmailHtml,
+} from '@/utils/email-templates'
 
 async function sendEmail(params: {
   to: string
@@ -50,25 +54,4 @@ export const EmailService = {
       html: buildConfirmationEmailHtml(booking),
     })
   },
-}
-
-function buildBookingEmailHtml(booking: Booking): string {
-  return `
-    <h2>New Booking Request</h2>
-    <p><strong>Client:</strong> ${booking.client_name}</p>
-    <p><strong>Email:</strong> ${booking.client_email}</p>
-    <p><strong>Date:</strong> ${booking.session_date}</p>
-    ${booking.notes ? `<p><strong>Notes:</strong> ${booking.notes}</p>` : ''}
-  `
-}
-
-function buildConfirmationEmailHtml(booking: Booking): string {
-  return `
-    <h2>Your Session Is Confirmed</h2>
-    <p>Hi ${booking.client_name},</p>
-    <p>Your photography session has been approved and confirmed.</p>
-    <p><strong>Date:</strong> ${booking.session_date}</p>
-    ${booking.notes ? `<p><strong>Notes:</strong> ${booking.notes}</p>` : ''}
-    <p>We look forward to seeing you. If you need to make changes, please contact us.</p>
-  `
 }

@@ -41,16 +41,17 @@ export const GalleryService = {
 
     const { data: files, error } = await supabase.storage
       .from('sessions')
-      .list(folderPath, { limit: 200, sortBy: { column: 'name', order: 'asc' } })
+      .list(folderPath, { limit: 1000, sortBy: { column: 'name', order: 'asc' } })
 
     if (error) throw new Error(error.message)
 
     const signedFiles: SessionFile[] = await Promise.all(
       (files || []).map(async (file) => {
         const filePath = `${folderPath}/${file.name}`
+        // 24h TTL: balances UX (long gallery sessions) vs. link exposure if URL is shared
         const { data: urlData } = await supabase.storage
           .from('sessions')
-          .createSignedUrl(filePath, 3600)
+          .createSignedUrl(filePath, 86400)
 
         const ext = file.name.split('.').pop()?.toLowerCase() || ''
         const type: SessionFile['type'] = ['jpg','jpeg','png','webp','heic'].includes(ext)

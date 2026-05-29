@@ -115,7 +115,7 @@ function SessionsContent() {
             Session links are valid for 5 days. Please log in to access your photos.
           </p>
           <Link
-            href="/login"
+            href="/auth/login"
             className="inline-block bg-orange-800 hover:bg-orange-900 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300"
           >
             Log In
@@ -195,7 +195,7 @@ function SessionsContent() {
         <h2 className="text-2xl font-bold text-orange-800 mb-4 plasterFont">Sign In Required</h2>
         <p className="text-orange-700 mb-6">Please log in to view your sessions.</p>
         <Link
-          href="/login"
+          href="/auth/login"
           className="inline-block bg-orange-800 hover:bg-orange-900 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300"
         >
           Log In

@@ -53,7 +53,6 @@ export default function LazyImage({ src, alt, onClick, className = '' }: LazyIma
         src={src}
         alt={alt}
         fill
-        unoptimized
         className={`
           object-cover transition-all duration-300
           group-hover:scale-105

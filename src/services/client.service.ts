@@ -19,18 +19,21 @@ export const ClientService = {
     }
 
     if (createError.message.includes('already been registered')) {
-      const { data: existingUsers, error: listError } = await supabase.auth.admin.listUsers()
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('email', email)
+        .maybeSingle()
 
-      if (listError) {
-        throw new Error(listError.message)
+      if (profileError) {
+        throw new Error(profileError.message)
       }
 
-      const existing = existingUsers?.users.find((u) => u.email === email)
-      if (!existing) {
+      if (!profile) {
         throw new AppError('User exists but could not be found', 500)
       }
 
-      return existing.id
+      return profile.id
     }
 
     throw new Error(createError.message)

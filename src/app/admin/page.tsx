@@ -1,4 +1,11 @@
+import type { Metadata } from 'next'
 import { SessionManager } from '@/components/admin'
+import { adminRobots } from '@/lib/site-metadata'
+
+export const metadata: Metadata = {
+  title: 'Upload Manager',
+  robots: adminRobots,
+}
 
 export default function AdminPage() {
   return (

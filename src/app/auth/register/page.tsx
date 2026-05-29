@@ -1,5 +1,11 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import AuthForm from '@/components/auth/AuthForm'
+
+export const metadata: Metadata = {
+  title: 'Create Account',
+  description: 'Create an account to book photography sessions and access your photo galleries.',
+}
 
 export default function RegisterPage() {
   return (

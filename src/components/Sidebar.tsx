@@ -32,7 +32,7 @@ function Sidebar() {
                         : 'text-white'}`}
             title='Home'>
             <Home size={24} absoluteStrokeWidth={true}/>
-            <span>home</span>
+            <span className="capitalize">home</span>
           </Link>
           <Link
             href="/gallery"
@@ -42,7 +42,7 @@ function Sidebar() {
                         : 'text-white'}`}
             title='Gallery'>
             <ImageIcon size={24} absoluteStrokeWidth={true}/>
-            <span>gallery</span>
+            <span className="capitalize">gallery</span>
           </Link>
           <Link
             href="/reservation"
@@ -52,7 +52,7 @@ function Sidebar() {
                         : 'text-white'}`}
             title='Reservation'>
             <Calendar size={24} absoluteStrokeWidth={true}/>
-            <span>reservation</span>
+            <span className="capitalize">reservation</span>
           </Link>
           {!loading && isAdmin && (
             <Link
@@ -63,7 +63,7 @@ function Sidebar() {
                           : 'text-white'}`}
               title='Admin'>
               <LayoutDashboard size={24} absoluteStrokeWidth={true}/>
-              <span>admin</span>
+              <span className="capitalize">admin</span>
             </Link>
           )}
           <Link
@@ -74,7 +74,7 @@ function Sidebar() {
                         : 'text-white'}`}
             title='About'>
             <User size={24} absoluteStrokeWidth={true}/>
-            <span>about</span>
+            <span className="capitalize">about</span>
           </Link>
         </nav>
       </div>
