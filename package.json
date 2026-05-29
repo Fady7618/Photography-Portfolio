@@ -18,6 +18,7 @@
   "dependencies": {
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.106.1",
+    "archiver": "^8.0.0",
     "framer-motion": "^12.40.0",
     "gsap": "^3.13.0",
     "lucide-react": "^0.547.0",
@@ -27,13 +28,16 @@
     "react-day-picker": "^10.0.1",
     "react-dom": "19.2.0",
     "resend": "^6.12.3",
-    "sweetalert2": "^11.26.24"
+    "sharp": "^0.34.5",
+    "sweetalert2": "^11.26.24",
+    "tus-js-client": "^4.3.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/tus-js-client": "^1.8.0",
     "eslint": "^9",
     "eslint-config-next": "16.0.0",
     "tailwindcss": "^4",

@@ -5,6 +5,24 @@ const TOKEN_EXPIRY_DAYS = 5
 const TOKEN_EXPIRY_MS = TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000
 
 export const ClientService = {
+  getDefaultTokenExpiresAt(): string {
+    return new Date(Date.now() + TOKEN_EXPIRY_MS).toISOString()
+  },
+
+  async findUserByEmail(email: string): Promise<string | null> {
+    const supabase = createServiceRoleClient()
+    const normalized = email.toLowerCase().trim()
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('email', normalized)
+      .maybeSingle()
+
+    if (error) throw new Error(error.message)
+    return data?.id ?? null
+  },
+
   async createOrFindUser(email: string, name: string): Promise<string> {
     const supabase = createServiceRoleClient()
 

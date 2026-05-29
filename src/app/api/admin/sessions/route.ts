@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server'
 import { AdminService } from '@/services/admin.service'
+import { ClientService } from '@/services/client.service'
 import { handleApiError, successResponse, AppError } from '@/lib/api-helpers'
 import { AuthService } from '@/services/auth.service'
 
@@ -31,7 +32,20 @@ export async function POST(req: NextRequest) {
       throw new AppError('Client name and email are required', 400)
     }
 
-    const session = await AdminService.createSession({ client_name, client_email })
+    const userId = await ClientService.findUserByEmail(client_email)
+    if (!userId) {
+      throw new AppError(
+        `No account found for ${client_email}. The client must sign up at /auth/register before you can create a session.`,
+        400
+      )
+    }
+
+    const session = await AdminService.createSession({
+      client_name,
+      client_email,
+      userId,
+      tokenExpiresAt: ClientService.getDefaultTokenExpiresAt(),
+    })
     return successResponse({ session }, 201)
   } catch (error) {
     return handleApiError(error)

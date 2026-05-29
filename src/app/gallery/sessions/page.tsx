@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, useCallback, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { GalleryGrid } from '@/components/gallery'
 import UserSessionsList from '@/components/gallery/UserSessionsList'
 import SessionsPageLayout from '@/components/gallery/SessionsPageLayout'
-import { SessionFile, ClientSession } from '@/types'
+import { ClientSession } from '@/types'
 import { useAuth } from '@/hooks/useAuth'
 
 function isExpiredError(message: string): boolean {
@@ -18,46 +18,45 @@ function SessionsContent() {
   const urlToken = searchParams.get('token')
   const { user, loading: authLoading } = useAuth()
 
-  const [files, setFiles] = useState<SessionFile[]>([])
   const [clientName, setClientName] = useState('')
   const [loading, setLoading] = useState(Boolean(urlToken))
   const [error, setError] = useState<string | null>(null)
   const [tokenExpired, setTokenExpired] = useState(false)
   const [authenticated, setAuthenticated] = useState(false)
   const [selectedSession, setSelectedSession] = useState<ClientSession | null>(null)
+  const [activeToken, setActiveToken] = useState<string | null>(urlToken)
 
-  function handleGalleryError(message: string): void {
-    if (isExpiredError(message)) {
-      setTokenExpired(true)
-      setError(null)
-    } else {
-      setError(message)
-    }
-  }
-
-  async function fetchGallery(t: string): Promise<void> {
+  const verifyToken = useCallback(async (t: string): Promise<boolean> => {
     setLoading(true)
     setError(null)
     setTokenExpired(false)
 
     try {
-      const res = await fetch(`/api/gallery?token=${encodeURIComponent(t)}`)
+      const res = await fetch(`/api/gallery?token=${encodeURIComponent(t)}&page=1`)
       const data = await res.json()
 
       if (!res.ok) {
-        handleGalleryError(data.error || 'Invalid or expired link.')
-        return
+        const message = data.error || 'Invalid or expired link.'
+        if (isExpiredError(message)) {
+          setTokenExpired(true)
+          setError(null)
+        } else {
+          setError(message)
+        }
+        return false
       }
 
-      setFiles(data.files)
       setClientName(data.session.client_name)
+      setActiveToken(t)
       setAuthenticated(true)
+      return true
     } catch {
       setError('Something went wrong. Please refresh the page.')
+      return false
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   useEffect(() => {
     if (!urlToken) return
@@ -65,45 +64,19 @@ function SessionsContent() {
     let active = true
 
     ;(async () => {
-      setLoading(true)
-      setError(null)
-      setTokenExpired(false)
-
-      try {
-        const res = await fetch(`/api/gallery?token=${encodeURIComponent(urlToken)}`)
-        const data = await res.json()
-        if (!active) return
-
-        if (!res.ok) {
-          const message = data.error || 'Invalid or expired link.'
-          if (isExpiredError(message)) {
-            setTokenExpired(true)
-            setError(null)
-          } else {
-            setError(message)
-          }
-          return
-        }
-
-        setFiles(data.files)
-        setClientName(data.session.client_name)
-        setAuthenticated(true)
-      } catch {
-        if (!active) return
-        setError('Something went wrong. Please refresh the page.')
-      } finally {
-        if (active) setLoading(false)
-      }
+      const ok = await verifyToken(urlToken)
+      if (!active) return
+      if (!ok) setAuthenticated(false)
     })()
 
     return () => {
       active = false
     }
-  }, [urlToken])
+  }, [urlToken, verifyToken])
 
   async function handleSessionSelect(session: ClientSession): Promise<void> {
     setSelectedSession(session)
-    await fetchGallery(session.access_token)
+    await verifyToken(session.access_token)
   }
 
   if (tokenExpired) {
@@ -148,7 +121,7 @@ function SessionsContent() {
   }
 
   if (urlToken) {
-    if (!authenticated) {
+    if (!authenticated || !activeToken) {
       return (
         <div className="min-h-screen bg-orange-100 flex items-center justify-center px-4">
           <div className="max-w-md w-full bg-white rounded-xl shadow-xl p-8 text-center">
@@ -161,21 +134,21 @@ function SessionsContent() {
     return (
       <SessionsPageLayout
         title={`Welcome, ${clientName}!`}
-        subtitle={`${files.length} file${files.length !== 1 ? 's' : ''} in your session`}
+        subtitle="Your session photos"
       >
-        <GalleryGrid files={files} clientName={clientName} embedded />
+        <GalleryGrid token={activeToken} clientName={clientName} embedded />
       </SessionsPageLayout>
     )
   }
 
   if (user) {
-    if (selectedSession) {
+    if (selectedSession && activeToken && authenticated) {
       return (
         <SessionsPageLayout
           title={`Welcome, ${clientName}!`}
-          subtitle={`${files.length} file${files.length !== 1 ? 's' : ''} in your session`}
+          subtitle="Your session photos"
         >
-          <GalleryGrid files={files} clientName={clientName} embedded />
+          <GalleryGrid token={activeToken} clientName={clientName} embedded />
         </SessionsPageLayout>
       )
     }

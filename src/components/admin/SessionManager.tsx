@@ -22,7 +22,6 @@ export default function SessionManager() {
   const [creating, setCreating] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [createWarning, setCreateWarning] = useState<string | null>(null)
 
   const loadSessions = useCallback(async () => {
     setError(null)
@@ -53,7 +52,6 @@ export default function SessionManager() {
     if (!newSession.client_name || !newSession.client_email) return
     setCreating(true)
     setError(null)
-    setCreateWarning(null)
 
     try {
       const res = await fetch('/api/admin/sessions', {
@@ -62,13 +60,13 @@ export default function SessionManager() {
         body: JSON.stringify(newSession),
       })
 
+      const data = await res.json().catch(() => ({}))
+
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
         setError((data as { error?: string }).error || 'Failed to create session')
         return
       }
 
-      const data = await res.json()
       const session = (data as { session?: ClientSession }).session
 
       if (!session) {
@@ -76,29 +74,11 @@ export default function SessionManager() {
         return
       }
 
-      const clientRes = await fetch('/api/admin/create-client', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          client_name: newSession.client_name,
-          client_email: newSession.client_email,
-          session_id: session.id,
-        }),
-      })
-
-      if (!clientRes.ok) {
-        const clientData = await clientRes.json().catch(() => ({}))
-        setCreateWarning(
-          `Session created but could not create client account: ${(clientData as { error?: string }).error || 'Unknown error'}`
-        )
-      }
-
       setSessions((prev) => [session, ...prev])
       setActiveSession(session)
       setNewSession({ client_name: '', client_email: '' })
-    } catch (err) {
+    } catch {
       setError('Something went wrong. Please try again.')
-      console.error('[SessionManager] createSession error:', err)
     } finally {
       setCreating(false)
     }
@@ -148,11 +128,6 @@ export default function SessionManager() {
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
             <p className="text-red-600 text-sm">{error}</p>
-          </div>
-        )}
-        {createWarning && (
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
-            <p className="text-amber-800 text-sm">{createWarning}</p>
           </div>
         )}
         <button

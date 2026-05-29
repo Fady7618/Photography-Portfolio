@@ -1,10 +1,13 @@
 import { createServiceRoleClient } from '@/lib/supabase-server'
 import { AppError } from '@/lib/api-helpers'
+import { sessionStoragePath } from '@/lib/session-storage'
 import { Booking, BookingStatus, ClientSession } from '@/types'
 
 export type CreateSessionInput = {
   client_name: string
   client_email: string
+  userId: string
+  tokenExpiresAt: string
 }
 
 export const AdminService = {
@@ -78,14 +81,16 @@ export const AdminService = {
   async createSession(input: CreateSessionInput): Promise<ClientSession> {
     const supabase = createServiceRoleClient()
     const slug = `${input.client_name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`
-    const folderPath = `sessions/${slug}`
+    const folderPath = slug
 
     const { data, error } = await supabase
       .from('client_sessions')
       .insert({
         client_name: input.client_name,
-        client_email: input.client_email,
+        client_email: input.client_email.toLowerCase().trim(),
         folder_path: folderPath,
+        user_id: input.userId,
+        token_expires_at: input.tokenExpiresAt,
       })
       .select()
       .single()
@@ -103,7 +108,7 @@ export const AdminService = {
     const supabase = createServiceRoleClient()
     const { error } = await supabase.storage
       .from('sessions')
-      .upload(`${folderPath}/${fileName}`, file, { upsert: true })
+      .upload(sessionStoragePath(folderPath, 'originals', fileName), file, { upsert: true })
 
     if (error) throw new Error(error.message)
   },

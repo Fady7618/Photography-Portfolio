@@ -26,10 +26,19 @@ export type ClientSession = {
 
 export type SessionFile = {
   name: string
-  url: string
+  thumbnailUrl: string
+  downloadUrl?: string
   size: number
   type: 'image' | 'video' | 'other'
   created_at: string
+}
+
+export type GalleryPagination = {
+  page: number
+  pageSize: number
+  totalFiles: number
+  totalPages: number
+  hasNextPage: boolean
 }
 
 export type BookingFormData = {

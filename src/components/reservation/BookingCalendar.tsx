@@ -42,11 +42,11 @@ export default function BookingCalendar({
   refreshTrigger = 0,
 }: BookingCalendarProps) {
   const [statusByDate, setStatusByDate] = useState<Map<string, BookingStatus>>(new Map())
-  const [loading, setLoading] = useState(true)
+  const [loadedVersion, setLoadedVersion] = useState<number | null>(null)
+  const loading = loadedVersion !== refreshTrigger
 
   useEffect(() => {
     let active = true
-    setLoading(true)
 
     fetch('/api/bookings')
       .then((res) => res.json())
@@ -59,10 +59,10 @@ export default function BookingCalendar({
           map.set(iso, status === 'confirmed' ? 'confirmed' : 'pending')
         }
         setStatusByDate(map)
-        setLoading(false)
+        setLoadedVersion(refreshTrigger)
       })
       .catch(() => {
-        if (active) setLoading(false)
+        if (active) setLoadedVersion(refreshTrigger)
       })
 
     return () => {
