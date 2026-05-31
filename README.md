@@ -2,7 +2,7 @@
 
 A full-stack photography business app built with **Next.js 16**, **Supabase**, and **Resend**. It includes a public marketing site, session booking with email notifications, role-based authentication, private client galleries (magic link or login), and an admin panel for reservations and bulk media uploads.
 
-**Version:** 0.2.0
+**Version:** 0.3.0
 
 ---
 
