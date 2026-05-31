@@ -4,7 +4,7 @@ import { sessionStoragePath } from '@/lib/session-storage'
 import { ClientSession, SessionFile, GalleryPagination } from '@/types'
 
 const PAGE_SIZE = 20
-const THUMBNAIL_URL_EXPIRY = 60 * 60
+const THUMBNAIL_URL_EXPIRY = 24 * 60 * 60
 
 const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'heic', 'tiff']
 const VIDEO_EXTENSIONS = ['mp4', 'mov', 'avi', 'webm']

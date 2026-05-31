@@ -32,6 +32,7 @@ export default function GalleryGrid({ token, clientName, embedded = false }: Gal
   const [selectMode, setSelectMode] = useState(false)
   const [downloading, setDownloading] = useState(false)
   const [zippingSession, setZippingSession] = useState(false)
+  const [zipError, setZipError] = useState<string | null>(null)
   const observerRef = useRef<IntersectionObserver | null>(null)
   const sentinelRef = useRef<HTMLDivElement | null>(null)
   const loadingRef = useRef(false)
@@ -107,7 +108,11 @@ export default function GalleryGrid({ token, clientName, embedded = false }: Gal
   function toggleSelect(fileName: string) {
     setSelectedFiles((prev) => {
       const next = new Set(prev)
-      next.has(fileName) ? next.delete(fileName) : next.add(fileName)
+      if (next.has(fileName)) {
+        next.delete(fileName)
+      } else {
+        next.add(fileName)
+      }
       return next
     })
   }
@@ -131,10 +136,16 @@ export default function GalleryGrid({ token, clientName, embedded = false }: Gal
     setDownloading(false)
   }
 
-  function handleZipDownload(): void {
+  async function handleZipDownload(): Promise<void> {
     setZippingSession(true)
-    downloadSessionZip(token, clientName)
-    setTimeout(() => setZippingSession(false), 3000)
+    setZipError(null)
+    try {
+      await downloadSessionZip(token, clientName)
+    } catch (err) {
+      setZipError(err instanceof Error ? err.message : 'Failed to prepare download')
+    } finally {
+      setZippingSession(false)
+    }
   }
 
   const images = files.filter((f) => f.type === 'image')
@@ -213,6 +224,12 @@ export default function GalleryGrid({ token, clientName, embedded = false }: Gal
                 {selectedFiles.size} selected
               </span>
 
+              {selectedFiles.size > 5 && (
+                <span className="text-orange-600 text-sm italic">
+                  Tip: For many files, Download All as ZIP is faster.
+                </span>
+              )}
+
               {selectedFiles.size > 0 && (
                 <button
                   type="button"
@@ -231,11 +248,14 @@ export default function GalleryGrid({ token, clientName, embedded = false }: Gal
           <button
             type="button"
             className="ml-auto bg-white border border-orange-800 hover:bg-orange-50 disabled:opacity-50 text-orange-800 font-semibold py-2 px-4 rounded-lg transition-all duration-300 text-sm"
-            onClick={handleZipDownload}
+            onClick={() => void handleZipDownload()}
             disabled={zippingSession}
           >
             {zippingSession ? 'Preparing ZIP...' : 'Download All as ZIP'}
           </button>
+          {zipError && (
+            <p className="w-full text-red-600 text-sm mt-1">{zipError}</p>
+          )}
         </div>
       )}
 

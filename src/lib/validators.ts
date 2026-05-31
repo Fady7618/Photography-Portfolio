@@ -1,6 +1,12 @@
 import { BookingFormData } from '@/types'
 import { AppError } from './api-helpers'
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+function isValidEmail(email: string): boolean {
+  return EMAIL_REGEX.test(email)
+}
+
 export function validateBookingBody(body: unknown): BookingFormData {
   if (!body || typeof body !== 'object') {
     throw new AppError('Invalid request body', 400)
@@ -11,7 +17,7 @@ export function validateBookingBody(body: unknown): BookingFormData {
   if (!client_name || typeof client_name !== 'string') {
     throw new AppError('client_name is required', 400)
   }
-  if (!client_email || typeof client_email !== 'string' || !client_email.includes('@')) {
+  if (!client_email || typeof client_email !== 'string' || !isValidEmail(client_email)) {
     throw new AppError('A valid client_email is required', 400)
   }
   if (!session_date || typeof session_date !== 'string') {
@@ -42,7 +48,7 @@ export function validateCreateClientBody(body: unknown): CreateClientInput {
   if (!client_name || typeof client_name !== 'string') {
     throw new AppError('client_name is required', 400)
   }
-  if (!client_email || typeof client_email !== 'string' || !client_email.includes('@')) {
+  if (!client_email || typeof client_email !== 'string' || !isValidEmail(client_email)) {
     throw new AppError('A valid client_email is required', 400)
   }
   if (!session_id || typeof session_id !== 'string') {

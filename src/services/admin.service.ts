@@ -59,7 +59,8 @@ export const AdminService = {
 
   async clearAllBookings(): Promise<void> {
     const supabase = createServiceRoleClient()
-    const { error} = await supabase
+    // Supabase requires at least one filter on DELETE to prevent accidental full-table deletes.
+    const { error } = await supabase
       .from('bookings')
       .delete()
       .neq('id', '00000000-0000-0000-0000-000000000000')
@@ -111,21 +112,5 @@ export const AdminService = {
       .upload(sessionStoragePath(folderPath, 'originals', fileName), file, { upsert: true })
 
     if (error) throw new Error(error.message)
-  },
-
-  async getBookingStats(): Promise<{
-    total: number
-    pending: number
-    confirmed: number
-    cancelled: number
-  }> {
-    const bookings = await this.getAllBookings()
-
-    return {
-      total: bookings.length,
-      pending: bookings.filter((b) => b.status === 'pending').length,
-      confirmed: bookings.filter((b) => b.status === 'confirmed').length,
-      cancelled: bookings.filter((b) => b.status === 'cancelled').length,
-    }
   },
 }

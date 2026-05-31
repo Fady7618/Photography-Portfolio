@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import Image from 'next/image'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import type { PortfolioImage } from '@/data/portfolio'
@@ -42,9 +43,9 @@ export default function ImageModal({
 
   if (!image) return null
 
-  return (
+  const modal = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 p-4"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -105,4 +106,8 @@ export default function ImageModal({
       </div>
     </div>
   )
+
+  return typeof document !== 'undefined'
+    ? createPortal(modal, document.body)
+    : null
 }
