@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useMutation } from '@/hooks/useMutation'
 import { BookingFormData, Booking } from '@/types'
+import { toISODate } from '@/utils/formatters'
 
 interface BookingFormProps {
   selectedDate: Date
@@ -14,7 +15,7 @@ export default function BookingForm({ selectedDate, onSuccess, onCancel }: Booki
   const [form, setForm] = useState({ client_name: '', client_email: '', notes: '' })
   const { loading, error, mutate } = useMutation<Booking, BookingFormData>('/api/bookings')
 
-  const formattedDate = selectedDate.toISOString().split('T')[0]
+  const formattedDate = toISODate(selectedDate)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()

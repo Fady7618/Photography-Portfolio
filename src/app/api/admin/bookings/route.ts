@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server'
 import { AdminService } from '@/services/admin.service'
+import { EmailService } from '@/services/email.service'
 import { handleApiError, successResponse, AppError } from '@/lib/api-helpers'
 import { AuthService } from '@/services/auth.service'
 
@@ -12,6 +13,35 @@ export async function GET() {
 
     const bookings = await AdminService.getAllBookings()
     return successResponse({ bookings })
+  } catch (error) {
+    return handleApiError(error)
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const { user, profile } = await AuthService.getProfileWithSession()
+    if (!user || profile?.role !== 'admin') {
+      throw new AppError('Unauthorized', 403)
+    }
+
+    const { searchParams } = new URL(req.url)
+    const id = searchParams.get('id')
+
+    if (!id) {
+      throw new AppError('Booking ID is required', 400)
+    }
+
+    const booking = await AdminService.confirmBooking(id)
+
+    try {
+      await EmailService.sendConfirmationEmail(booking)
+    } catch (emailError) {
+      await AdminService.setBookingStatus(id, 'pending')
+      throw emailError
+    }
+
+    return successResponse({ message: 'Booking confirmed', booking })
   } catch (error) {
     return handleApiError(error)
   }

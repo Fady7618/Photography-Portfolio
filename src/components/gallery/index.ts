@@ -1,4 +1,6 @@
-export { default as TokenGate } from './TokenGate'
 export { default as FileCard } from './FileCard'
 export { default as GalleryGrid } from './GalleryGrid'
 export { default as PortfolioGrid } from './PortfolioGrid'
+export { default as ImageModal } from './ImageModal'
+export { default as GalleryPageHeader, GalleryNavLink } from './GalleryPageHeader'
+export { default as SessionsPageLayout } from './SessionsPageLayout'

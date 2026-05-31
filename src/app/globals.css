@@ -4,7 +4,6 @@
 body, html {
   margin: 0;
   padding: 0;
-  text-transform: capitalize;
 }
 ::-webkit-scrollbar {
   width: 12px;
@@ -45,27 +44,44 @@ body, html {
   font-family: var(--font-rubik-dirt);
 }
 
-/* React Day Picker Custom Styles */
+/* React Day Picker v10 — reservation calendar */
 .rdp-custom {
-  --rdp-cell-size: 50px;
-  --rdp-accent-color: #9a3412;
-  --rdp-background-color: #ffedd5;
-  --rdp-accent-color-dark: #7c2d12;
-  --rdp-background-color-dark: #fed7aa;
-  --rdp-outline: 2px solid var(--rdp-accent-color);
-  --rdp-outline-selected: 2px solid var(--rdp-accent-color);
+  width: 100%;
   margin: 0;
+
+  --rdp-accent-color: #9a3412;
+  --rdp-accent-background-color: #ffedd5;
+  --rdp-today-color: #9a3412;
+  --rdp-selected-border: 2px solid transparent;
+  --rdp-day_button-border: 2px solid transparent;
+
+  /* Square cells: scale with card width, stay centered in each column */
+  --rdp-day-size: clamp(2.25rem, calc((100% - 1.5rem) / 7), 3rem);
+  --rdp-day-width: var(--rdp-day-size);
+  --rdp-day-height: var(--rdp-day-size);
+  --rdp-day_button-width: var(--rdp-day-size);
+  --rdp-day_button-height: var(--rdp-day-size);
+  --rdp-day_button-border-radius: 100%;
+}
+
+.rdp-custom .rdp-months {
+  width: 100%;
+  max-width: 100%;
+  justify-content: center;
 }
 
 .rdp-custom .rdp-month {
   width: 100%;
 }
 
-.rdp-custom .rdp-caption {
-  display: flex;
+.rdp-custom .rdp-month_grid {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.rdp-custom .rdp-month_caption {
   justify-content: center;
-  align-items: center;
-  padding: 1rem 0;
+  margin-bottom: 0.5rem;
 }
 
 .rdp-custom .rdp-caption_label {
@@ -74,55 +90,85 @@ body, html {
   color: #9a3412;
 }
 
-.rdp-custom .rdp-head_cell {
+.rdp-custom .rdp-weekday {
   color: #9a3412;
   font-weight: 600;
   font-size: 0.875rem;
-  padding: 0.5rem;
-}
-
-.rdp-custom .rdp-cell {
-  padding: 0.25rem;
+  padding: 0.5rem 0;
+  text-align: center;
 }
 
 .rdp-custom .rdp-day {
-  width: var(--rdp-cell-size);
-  height: var(--rdp-cell-size);
-  border-radius: 0.5rem;
-  font-weight: 500;
-  transition: all 0.2s;
+  padding: 0.125rem;
+  text-align: center;
+  vertical-align: middle;
 }
 
-.rdp-custom .rdp-day:hover:not(.rdp-day_disabled):not(.rdp-day_selected) {
+.rdp-custom .rdp-day_button {
+  margin: 0 auto;
+  font-weight: 500;
+  transition: background-color 0.2s, color 0.2s;
+  outline: none;
+}
+
+.rdp-custom .rdp-day_button:focus,
+.rdp-custom .rdp-day_button:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.rdp-custom .rdp-day_button:hover:not(:disabled) {
   background-color: #fed7aa;
   color: #9a3412;
 }
 
-.rdp-custom .rdp-day_selected {
+.rdp-custom .rdp-selected .rdp-day_button {
   background-color: #9a3412 !important;
   color: white !important;
   font-weight: 600;
+  border-color: transparent;
+  outline: none;
+  box-shadow: none;
 }
 
-.rdp-custom .rdp-day_disabled {
-  opacity: 0.3;
+.rdp-custom .rdp-disabled:not(:has(.rdp-status-pending)):not(:has(.rdp-status-confirmed)) .rdp-day_button {
+  opacity: 0.35;
   cursor: not-allowed;
 }
 
-.rdp-custom .rdp-day_today:not(.rdp-day_selected) {
+.rdp-custom .rdp-day.rdp-disabled:has(.rdp-status-pending),
+.rdp-custom .rdp-day.rdp-disabled:has(.rdp-status-confirmed) {
+  opacity: 1;
+}
+
+.rdp-custom .rdp-day_button.rdp-status-pending {
+  opacity: 1 !important;
+  background-color: #fef3c7 !important;
+  color: #92400e !important;
+  font-weight: 700;
+}
+
+.rdp-custom .rdp-day_button.rdp-status-confirmed {
+  opacity: 1 !important;
+  background-color: #dcfce7 !important;
+  color: #166534 !important;
+  font-weight: 700;
+}
+
+.rdp-custom .rdp-today:not(.rdp-selected) .rdp-day_button {
   font-weight: 700;
   color: #9a3412;
   background-color: #ffedd5;
 }
 
-.rdp-custom .rdp-nav_button {
-  width: 2rem;
-  height: 2rem;
+.rdp-custom .rdp-button_previous,
+.rdp-custom .rdp-button_next {
   border-radius: 0.375rem;
   color: #9a3412;
-  transition: all 0.2s;
+  transition: background-color 0.2s;
 }
 
-.rdp-custom .rdp-nav_button:hover {
+.rdp-custom .rdp-button_previous:hover,
+.rdp-custom .rdp-button_next:hover {
   background-color: #fed7aa;
 }
