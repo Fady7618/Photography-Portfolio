@@ -24,10 +24,13 @@ A full-stack photography business app built with **Next.js 16**, **Supabase**, a
 - **Session refresh** — Supabase SSR cookies refreshed on every matched request
 
 ### Reservations
-- **Interactive calendar** — Pick an available date with `react-day-picker` (pending vs confirmed styling)
-- **Booking form** — Name, email, optional notes; validated server-side
-- **Duplicate date prevention** — Blocks double-booking for the same session date
-- **Email notifications** — Photographer notified via Resend on each new booking
+- **Multi-step booking flow** — Date → time slot → contact form → confirmation
+- **Interactive calendar** — Pick a date with `react-day-picker` (pending vs confirmed day styling)
+- **Time slot picker** — Choose from configurable slots (default: 10:00, 14:00, 18:00); booked slots shown as disabled
+- **Per-slot availability** — A day stays bookable until every slot is taken; calendar only disables fully booked dates
+- **Booking form** — Name, email, optional notes; date and time shown on submit; validated server-side
+- **Duplicate slot prevention** — Blocks double-booking for the same date **and** time (cancelled bookings excluded)
+- **Email notifications** — Photographer and clients receive emails including session time via Resend
 - **Admin approval flow** — Confirm pending bookings; client receives confirmation email (with rollback if email fails)
 - **Rate limiting** — Booking API limited to 5 requests per 10 minutes per IP
 
@@ -43,6 +46,8 @@ A full-stack photography business app built with **Next.js 16**, **Supabase**, a
 
 ### Admin panel (`/admin`)
 - **Dashboard** (`/admin/dashboard`) — Reservation table with live stats (total, pending, confirmed, cancelled)
+- **Bookings calendar** — FullCalendar week/month/day views; click an event for client details (name, email, date, time, status, notes)
+- **Time slot settings** — Add, remove, and save available booking times (stored in `photographer_settings`; reflected on `/reservation` immediately)
 - **Approve / cancel** — Confirm bookings (sends client email) or cancel individual reservations
 - **Clear all** — Remove all bookings with confirmation
 - **Upload manager** (`/admin`) — Create client sessions, link users, copy shareable gallery links
@@ -65,7 +70,7 @@ A full-stack photography business app built with **Next.js 16**, **Supabase**, a
 | Uploads | tus-js-client (resumable) + server multipart fallback |
 | Archives | archiver (session ZIP downloads) |
 | Animations | GSAP (ScrollSmoother, ScrollTrigger) |
-| UI | Lucide React, SweetAlert2, react-day-picker |
+| UI | Lucide React, SweetAlert2, react-day-picker, FullCalendar |
 | Testing | Vitest |
 
 ---
@@ -84,13 +89,14 @@ src/
 ├── context/                # AuthProvider (user, profile, roles)
 ├── hooks/                  # useAuth, useFetch, useMutation
 ├── lib/                    # Supabase, env, validators, rate limit, API helpers
-├── services/               # Business logic (booking, gallery, admin, email, auth, client)
+├── services/               # Business logic (booking, settings, gallery, admin, email, auth, client)
 ├── types/                  # Shared TypeScript types
 ├── utils/                  # Formatters, email templates, alerts, downloads
 ├── data/                   # Static portfolio data
 └── __tests__/              # Vitest unit tests
 middleware.ts               # Auth guards, rate limits, session refresh
 supabase-auth-setup.sql     # Profiles table, RLS, auth triggers
+supabase/migrations/        # Schema migrations (e.g. time slots)
 ```
 
 ### Storage layout (Supabase `sessions` bucket)
@@ -121,6 +127,12 @@ Run the SQL in your Supabase SQL Editor:
 
 - Base schema: `bookings`, `client_sessions`
 - Auth schema: [`supabase-auth-setup.sql`](supabase-auth-setup.sql) — `profiles` table, `user_id` columns, auto-profile trigger
+- **Time slots** (required for multi-slot booking): [`supabase/migrations/20260601_timeslots.sql`](supabase/migrations/20260601_timeslots.sql)
+  - Adds `bookings.session_time` (`HH:MM`)
+  - Unique index on `(session_date, session_time)` for non-cancelled bookings
+  - Creates `photographer_settings` with default slots `["10:00","14:00","18:00"]` and public read RLS
+
+Run the entire migration file in one query. Supabase may warn about `DROP INDEX` — that only removes the old “one booking per day” index, not your booking rows.
 
 ### 2. Storage
 
@@ -178,12 +190,12 @@ Open [http://localhost:3000](http://localhost:3000).
 | `/gallery` | Public | Portfolio showcase |
 | `/gallery/sessions` | Client / Token | Client session list or private gallery |
 | `/gallery/sessions?token=...` | Token | Private gallery via magic link |
-| `/reservation` | Authenticated | Book a session |
+| `/reservation` | Authenticated | Book a session (date → time → form) |
 | `/about` | Public | About page |
 | `/auth/login` | Guest | Sign in |
 | `/auth/register` | Guest | Create account |
 | `/admin` | Admin | Upload manager |
-| `/admin/dashboard` | Admin | Reservation dashboard |
+| `/admin/dashboard` | Admin | Reservations, FullCalendar, time slot settings |
 
 ---
 
@@ -191,13 +203,17 @@ Open [http://localhost:3000](http://localhost:3000).
 
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
-| `GET` | `/api/bookings` | Public | Booked dates (pending + confirmed) |
-| `POST` | `/api/bookings` | Auth | Create booking |
+| `GET` | `/api/bookings` | Public | `fullyBookedDates` + `dateStatuses` for calendar |
+| `GET` | `/api/bookings?date=YYYY-MM-DD` | Public | `bookedTimes` for a specific date |
+| `POST` | `/api/bookings` | Auth | Create booking (`session_time` required) |
+| `GET` | `/api/settings/time-slots` | Public | Available slot times from `photographer_settings` |
+| `PUT` | `/api/settings/time-slots` | Admin | Update available slot times |
 | `GET` | `/api/gallery?token=&page=` | Token | Paginated session files + signed thumbnails |
 | `GET` | `/api/gallery/download` | Token | Stream single original file |
 | `GET` | `/api/gallery/download-zip` | Token | Download all originals as ZIP |
 | `GET` | `/api/user-sessions` | Auth | Logged-in client's sessions |
 | `GET` | `/api/admin/bookings` | Admin | List all bookings |
+| `GET` | `/api/admin/bookings/calendar` | Admin | Bookings as FullCalendar event objects |
 | `PATCH` | `/api/admin/bookings?id=` | Admin | Confirm booking + send client email |
 | `DELETE` | `/api/admin/bookings` | Admin | Cancel booking or clear all |
 | `GET` | `/api/admin/sessions` | Admin | List client sessions |
@@ -213,9 +229,9 @@ Open [http://localhost:3000](http://localhost:3000).
 ```mermaid
 flowchart LR
     Guest[Guest] -->|Sign up| Client[Client]
-    Client -->|Book session| Reservation[/reservation]
+    Client -->|Book date and time| Reservation[/reservation]
     Client -->|View own sessions| Gallery[/gallery/sessions]
-    Admin[Admin] --> Dashboard[/admin/dashboard]
+    Admin[Admin] --> Dashboard["/admin/dashboard (table + calendar)"]
     Admin --> Upload[/admin]
     Guest -->|Token link| TokenGallery["/gallery/sessions?token=..."]
 ```
@@ -224,13 +240,13 @@ flowchart LR
 |------|------------|
 | **Guest** | Home, gallery portfolio, about, auth pages |
 | **Client** | Everything above + reservations, own photo sessions |
-| **Admin** | Everything above + admin dashboard, upload manager, all bookings |
+| **Admin** | Everything above + admin dashboard (calendar, slot settings), upload manager, all bookings |
 
 ---
 
 ## Architecture
 
-- **Service layer** — API routes delegate to `src/services/`; no business logic in route handlers
+- **Service layer** — API routes delegate to `src/services/` (`BookingService`, `SettingsService`, `AdminService`, etc.); no business logic in route handlers
 - **Centralized errors** — `AppError` + `handleApiError` in `src/lib/api-helpers.ts`
 - **Request validation** — Dedicated validators in `src/lib/validators.ts` (email regex, required fields)
 - **Env separation** — `publicEnv` for client; `getServerEnv()` for server-only secrets
@@ -242,7 +258,7 @@ flowchart LR
 
 ## Testing
 
-Unit tests cover validators, email HTML escaping, formatters, and booking duplicate-date logic:
+Unit tests cover validators, email HTML escaping, formatters, and booking validation logic:
 
 ```bash
 npm test
