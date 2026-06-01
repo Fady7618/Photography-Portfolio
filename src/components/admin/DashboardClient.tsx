@@ -1,11 +1,30 @@
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
+import dynamic from 'next/dynamic'
 import DashboardStats from '@/components/admin/DashboardStats'
 import ReservationTable from '@/components/admin/ReservationTable'
 import { Booking } from '@/types'
 import { showAlert } from '@/utils/alert'
 import { useFetch } from '@/hooks/useFetch'
+
+const BookingsCalendar = dynamic(() => import('@/components/admin/BookingsCalendar'), {
+  ssr: false,
+  loading: () => (
+    <div className="bg-white rounded-lg shadow p-8">
+      <p className="text-orange-700">Loading calendar...</p>
+    </div>
+  ),
+})
+
+const TimeSlotSettings = dynamic(() => import('@/components/admin/TimeSlotSettings'), {
+  ssr: false,
+  loading: () => (
+    <div className="bg-white rounded-lg shadow p-8">
+      <p className="text-orange-700">Loading settings...</p>
+    </div>
+  ),
+})
 
 type BookingsResponse = {
   bookings: Booking[]
@@ -107,17 +126,27 @@ export default function DashboardClient() {
 
   return (
     <div className="min-h-screen bg-orange-100 p-8">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-orange-800 mb-6 plasterFont">Reservation Dashboard</h1>
+      <div className="max-w-7xl mx-auto space-y-8">
+        <h1 className="text-3xl font-bold text-orange-800 plasterFont">Reservation Dashboard</h1>
 
         <DashboardStats {...stats} />
 
-        <ReservationTable
-          bookings={bookings}
-          onApprove={handleApprove}
-          onCancel={handleCancel}
-          onClearAll={handleClearAll}
-        />
+        <section aria-label="Bookings calendar">
+          <BookingsCalendar />
+        </section>
+
+        <section aria-label="Time slot settings">
+          <TimeSlotSettings />
+        </section>
+
+        <section aria-label="Reservations table">
+          <ReservationTable
+            bookings={bookings}
+            onApprove={handleApprove}
+            onCancel={handleCancel}
+            onClearAll={handleClearAll}
+          />
+        </section>
       </div>
     </div>
   )

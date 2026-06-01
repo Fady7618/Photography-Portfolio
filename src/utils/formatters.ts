@@ -55,3 +55,12 @@ export function toISODate(date: Date): string {
     String(date.getDate()).padStart(2, '0'),
   ].join('-')
 }
+
+/** Format "HH:MM" as "10:00 AM" / "2:00 PM". Returns empty string if missing. */
+export function formatTimeLabel(time?: string | null): string {
+  if (!time || !/^\d{2}:\d{2}$/.test(time)) return ''
+  const [hour, minute] = time.split(':').map(Number)
+  const period = hour >= 12 ? 'PM' : 'AM'
+  const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour
+  return `${displayHour}:${String(minute).padStart(2, '0')} ${period}`
+}
