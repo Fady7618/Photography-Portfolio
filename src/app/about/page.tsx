@@ -68,7 +68,7 @@ export default function AboutPage() {
                   <Icon className="h-6 w-6" aria-hidden />
                 </div>
                 <h3 className="text-lg font-semibold text-orange-800 mb-2">{title}</h3>
-                <p className="text-sm text-orange-600">{description}</p>
+                <p className="text-sm text-orange-800">{description}</p>
               </div>
             ))}
           </div>
