@@ -18,23 +18,33 @@ export default function TimeSlotPicker({
   onBack,
 }: TimeSlotPickerProps) {
   const [slots, setSlots] = useState<TimeSlot[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loadedDateStr, setLoadedDateStr] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const dateStr = toISODate(selectedDate)
+  const loading = loadedDateStr !== dateStr
+  const displaySlots = loadedDateStr === dateStr ? slots : []
+  const hasAvailableSlots = displaySlots.some((s) => s.available)
+
+  const dateLabel = selectedDate.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  })
 
   useEffect(() => {
-    setLoading(true)
-    setError(null)
+    let active = true
 
     Promise.all([
       fetch('/api/settings/time-slots').then((r) => r.json()),
       fetch(`/api/bookings?date=${dateStr}`).then((r) => r.json()),
     ])
       .then(([settingsData, bookingsData]) => {
+        if (!active) return
         const allSlots: string[] = settingsData.slots ?? ['10:00', '14:00', '18:00']
         const bookedTimes: string[] = bookingsData.bookedTimes ?? []
 
+        setError(null)
         setSlots(
           allSlots.map((time) => ({
             time,
@@ -42,18 +52,18 @@ export default function TimeSlotPicker({
             available: !bookedTimes.includes(time),
           }))
         )
+        setLoadedDateStr(dateStr)
       })
-      .catch(() => setError('Could not load time slots. Please refresh.'))
-      .finally(() => setLoading(false))
+      .catch(() => {
+        if (!active) return
+        setError('Could not load time slots. Please refresh.')
+        setLoadedDateStr(dateStr)
+      })
+
+    return () => {
+      active = false
+    }
   }, [dateStr])
-
-  const hasAvailableSlots = slots.some((s) => s.available)
-
-  const dateLabel = selectedDate.toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-  })
 
   if (loading) {
     return (
@@ -91,7 +101,7 @@ export default function TimeSlotPicker({
         </p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-          {slots.map((slot) => {
+          {displaySlots.map((slot) => {
             const isSelected = selectedTime === slot.time
             return (
               <button

@@ -20,7 +20,8 @@ export default function TimeSlotSettings() {
 
   function addSlot() {
     if (!newSlot) return
-    const normalized = newSlot.length === 5 ? newSlot : newSlot.slice(0, 5)
+    // <input type="time"> may return "HH:MM" or "HH:MM:SS" — normalise to "HH:MM"
+    const normalized = newSlot.slice(0, 5)
     if (!/^\d{2}:\d{2}$/.test(normalized)) return
     if (slots.includes(normalized)) return
     setSlots((prev) => [...prev, normalized].sort())
@@ -37,23 +38,27 @@ export default function TimeSlotSettings() {
     setSaving(true)
     setError(null)
 
-    const res = await fetch('/api/settings/time-slots', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ slots }),
-    })
+    try {
+      const res = await fetch('/api/settings/time-slots', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slots }),
+      })
 
-    const data = await res.json().catch(() => ({}))
+      const data = await res.json().catch(() => ({}))
 
-    if (res.ok) {
-      setSlots(data.slots ?? slots)
-      setSaved(true)
-      setTimeout(() => setSaved(false), 2000)
-    } else {
-      setError(typeof data.error === 'string' ? data.error : 'Failed to save')
+      if (res.ok) {
+        setSlots(data.slots ?? slots)
+        setSaved(true)
+        setTimeout(() => setSaved(false), 2000)
+      } else {
+        setError(typeof data.error === 'string' ? data.error : 'Failed to save')
+      }
+    } catch {
+      setError('Network error. Please try again.')
+    } finally {
+      setSaving(false)
     }
-
-    setSaving(false)
   }
 
   return (

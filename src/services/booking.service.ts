@@ -31,12 +31,14 @@ export const BookingService = {
 
   async getFullyBookedDates(): Promise<string[]> {
     const supabase = createServiceRoleClient()
-    const allSlots = await SettingsService.getAvailableSlots()
 
-    const { data: bookings, error } = await supabase
-      .from('bookings')
-      .select('session_date, session_time')
-      .in('status', ['pending', 'confirmed'])
+    const [allSlots, { data: bookings, error }] = await Promise.all([
+      SettingsService.getAvailableSlots(),
+      supabase
+        .from('bookings')
+        .select('session_date, session_time')
+        .in('status', ['pending', 'confirmed']),
+    ])
 
     if (error) throw new Error(error.message)
 

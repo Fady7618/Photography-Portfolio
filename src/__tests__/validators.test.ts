@@ -8,6 +8,7 @@ describe('validateBookingBody', () => {
       client_name: 'Jane Doe',
       client_email: 'jane@example.com',
       session_date: '2026-06-15',
+      session_time: '14:00',
       notes: 'Outdoor shoot',
     })
 
@@ -15,6 +16,7 @@ describe('validateBookingBody', () => {
       client_name: 'Jane Doe',
       client_email: 'jane@example.com',
       session_date: '2026-06-15',
+      session_time: '14:00',
       notes: 'Outdoor shoot',
     })
   })
@@ -24,6 +26,26 @@ describe('validateBookingBody', () => {
       validateBookingBody({
         client_email: 'jane@example.com',
         session_date: '2026-06-15',
+        session_time: '10:00',
+      })
+    ).toThrow(AppError)
+  })
+
+  it('throws when session_time is missing or invalid', () => {
+    expect(() =>
+      validateBookingBody({
+        client_name: 'Jane',
+        client_email: 'jane@example.com',
+        session_date: '2026-06-15',
+      })
+    ).toThrow(AppError)
+
+    expect(() =>
+      validateBookingBody({
+        client_name: 'Jane',
+        client_email: 'jane@example.com',
+        session_date: '2026-06-15',
+        session_time: '2pm',
       })
     ).toThrow(AppError)
   })
@@ -34,6 +56,7 @@ describe('validateBookingBody', () => {
         client_name: 'Jane',
         client_email: 'not-an-email',
         session_date: '2026-06-15',
+        session_time: '10:00',
       })
     ).toThrow(AppError)
   })

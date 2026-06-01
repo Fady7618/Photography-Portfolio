@@ -1,4 +1,5 @@
 import { createServiceRoleClient } from '@/lib/supabase-server'
+import { AppError } from '@/lib/api-helpers'
 
 const SETTING_KEY = 'available_time_slots'
 const DEFAULT_SLOTS = ['10:00', '14:00', '18:00']
@@ -37,7 +38,7 @@ export const SettingsService = {
       { onConflict: 'setting_key' }
     )
 
-    if (error) throw new Error(error.message)
+    if (error) throw new AppError(error.message, 500)
     return sorted
   },
 }

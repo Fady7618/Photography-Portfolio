@@ -24,16 +24,25 @@ export default function BookingsCalendar() {
   const [selectedBooking, setSelectedBooking] = useState<SelectedBooking | null>(null)
 
   useEffect(() => {
+    let active = true
+
     fetch('/api/admin/bookings/calendar')
       .then((res) => {
         if (!res.ok) throw new Error('Failed to load calendar')
         return res.json()
       })
       .then((data) => {
+        if (!active) return
         setEvents(data.events ?? [])
         setLoading(false)
       })
-      .catch(() => setLoading(false))
+      .catch(() => {
+        if (active) setLoading(false)
+      })
+
+    return () => {
+      active = false
+    }
   }, [])
 
   function handleEventClick(info: EventClickArg) {
