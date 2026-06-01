@@ -3,26 +3,39 @@
 import { useState } from 'react'
 import { useMutation } from '@/hooks/useMutation'
 import { BookingFormData, Booking } from '@/types'
-import { toISODate } from '@/utils/formatters'
+import { formatTimeLabel, toISODate } from '@/utils/formatters'
 
 interface BookingFormProps {
   selectedDate: Date
+  selectedTime: string
   onSuccess: () => void | Promise<void>
   onCancel: () => void
 }
 
-export default function BookingForm({ selectedDate, onSuccess, onCancel }: BookingFormProps) {
+export default function BookingForm({
+  selectedDate,
+  selectedTime,
+  onSuccess,
+  onCancel,
+}: BookingFormProps) {
   const [form, setForm] = useState({ client_name: '', client_email: '', notes: '' })
   const { loading, error, mutate } = useMutation<Booking, BookingFormData>('/api/bookings')
 
-  const formattedDate = toISODate(selectedDate)
+  const formattedDate = selectedDate.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+  const formattedTime = formatTimeLabel(selectedTime)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 
     const payload: BookingFormData = {
       ...form,
-      session_date: formattedDate,
+      session_date: toISODate(selectedDate),
+      session_time: selectedTime,
     }
 
     const result = await mutate(payload)
@@ -30,18 +43,17 @@ export default function BookingForm({ selectedDate, onSuccess, onCancel }: Booki
   }
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto bg-white rounded-xl shadow-lg p-8 space-y-6">
+    <form
+      onSubmit={handleSubmit}
+      className="w-full max-w-md mx-auto bg-white rounded-xl shadow-lg p-8 space-y-6"
+    >
       <div className="text-center">
         <h3 className="text-2xl font-bold text-orange-800 mb-2 plasterFont">
           Book Your Session
         </h3>
         <p className="text-orange-700">
-          {selectedDate.toLocaleDateString('en-US', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-          })}
+          {formattedDate}
+          {formattedTime ? ` at ${formattedTime}` : ''}
         </p>
       </div>
 
@@ -98,15 +110,15 @@ export default function BookingForm({ selectedDate, onSuccess, onCancel }: Booki
       )}
 
       <div className="flex gap-3">
-        <button 
-          type="button" 
+        <button
+          type="button"
           onClick={onCancel}
           className="flex-1 px-6 py-3 border-2 border-orange-800 text-orange-800 font-semibold rounded-lg hover:bg-orange-50 transition-all duration-300"
         >
           Back
         </button>
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           disabled={loading}
           className="flex-1 bg-orange-800 hover:bg-orange-900 disabled:bg-orange-300 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
         >

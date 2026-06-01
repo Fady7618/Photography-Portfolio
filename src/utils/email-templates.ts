@@ -1,5 +1,5 @@
 import { Booking } from '@/types'
-import { escapeHtml } from '@/utils/formatters'
+import { escapeHtml, formatTimeLabel } from '@/utils/formatters'
 
 function wrapEmailDocument(title: string, bodyContent: string): string {
   return `<!DOCTYPE html>
@@ -41,6 +41,8 @@ export function buildBookingEmailHtml(booking: Booking): string {
   const name = escapeHtml(booking.client_name)
   const email = escapeHtml(booking.client_email)
   const date = escapeHtml(booking.session_date)
+  const timeLabel = formatTimeLabel(booking.session_time)
+  const time = timeLabel ? escapeHtml(timeLabel) : ''
   const notes = booking.notes ? escapeHtml(booking.notes) : ''
 
   const body = `
@@ -48,6 +50,7 @@ export function buildBookingEmailHtml(booking: Booking): string {
     <p style="margin:0 0 8px;"><strong>Client:</strong> ${name}</p>
     <p style="margin:0 0 8px;"><strong>Email:</strong> ${email}</p>
     <p style="margin:0 0 8px;"><strong>Date:</strong> ${date}</p>
+    ${time ? `<p style="margin:0 0 8px;"><strong>Time:</strong> ${time}</p>` : ''}
     ${notes ? `<p style="margin:0;"><strong>Notes:</strong> ${notes}</p>` : ''}
   `
 
@@ -57,6 +60,8 @@ export function buildBookingEmailHtml(booking: Booking): string {
 export function buildConfirmationEmailHtml(booking: Booking): string {
   const name = escapeHtml(booking.client_name)
   const date = escapeHtml(booking.session_date)
+  const timeLabel = formatTimeLabel(booking.session_time)
+  const time = timeLabel ? escapeHtml(timeLabel) : ''
   const notes = booking.notes ? escapeHtml(booking.notes) : ''
 
   const body = `
@@ -64,6 +69,7 @@ export function buildConfirmationEmailHtml(booking: Booking): string {
     <p style="margin:0 0 12px;">Hi ${name},</p>
     <p style="margin:0 0 12px;">Your photography session has been approved and confirmed.</p>
     <p style="margin:0 0 8px;"><strong>Date:</strong> ${date}</p>
+    ${time ? `<p style="margin:0 0 8px;"><strong>Time:</strong> ${time}</p>` : ''}
     ${notes ? `<p style="margin:0 0 12px;"><strong>Notes:</strong> ${notes}</p>` : ''}
     <p style="margin:0;">We look forward to seeing you. If you need to make changes, please contact us.</p>
   `

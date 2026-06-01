@@ -2,6 +2,7 @@ import { createResendClient } from '@/lib/resend'
 import { getServerEnv } from '@/lib/env'
 import { AppError } from '@/lib/api-helpers'
 import { Booking } from '@/types'
+import { formatTimeLabel } from '@/utils/formatters'
 import {
   buildBookingEmailHtml,
   buildConfirmationEmailHtml,
@@ -39,18 +40,27 @@ async function sendEmail(params: {
 export const EmailService = {
   async sendBookingNotification(booking: Booking): Promise<void> {
     const { photographerEmail } = getServerEnv()
+    const timePart = formatTimeLabel(booking.session_time)
+    const subjectSuffix = timePart
+      ? `${booking.session_date} at ${timePart}`
+      : booking.session_date
 
     await sendEmail({
       to: photographerEmail,
-      subject: `New booking — ${booking.session_date}`,
+      subject: `New booking — ${subjectSuffix}`,
       html: buildBookingEmailHtml(booking),
     })
   },
 
   async sendConfirmationEmail(booking: Booking): Promise<void> {
+    const timePart = formatTimeLabel(booking.session_time)
+    const subjectSuffix = timePart
+      ? `${booking.session_date} at ${timePart}`
+      : booking.session_date
+
     await sendEmail({
       to: booking.client_email,
-      subject: `Your photography session is confirmed — ${booking.session_date}`,
+      subject: `Your photography session is confirmed — ${subjectSuffix}`,
       html: buildConfirmationEmailHtml(booking),
     })
   },

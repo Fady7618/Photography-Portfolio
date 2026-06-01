@@ -7,6 +7,7 @@ export type Booking = {
   client_name: string
   client_email: string
   session_date: string
+  session_time?: string
   notes?: string
   status: BookingStatus
   created_at: string
@@ -45,7 +46,18 @@ export type BookingFormData = {
   client_name: string
   client_email: string
   session_date: string
+  session_time: string
   notes?: string
+}
+
+export type TimeSlot = {
+  time: string
+  label: string
+  available: boolean
+}
+
+export type PhotographerSettings = {
+  available_time_slots: string[]
 }
 
 export type Profile = {
