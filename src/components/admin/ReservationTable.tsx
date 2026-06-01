@@ -1,7 +1,7 @@
 'use client'
 
 import { Booking } from '@/types'
-import { formatDate } from '@/utils/formatters'
+import { formatDate, formatTimeLabel } from '@/utils/formatters'
 import { Check, Trash2, X } from 'lucide-react'
 
 interface ReservationTableProps {
@@ -38,6 +38,7 @@ export default function ReservationTable({ bookings, onApprove, onCancel, onClea
           <thead className="bg-orange-100">
             <tr>
               <th className="px-4 py-3 text-left text-sm font-semibold text-orange-800">Date</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold text-orange-800">Time</th>
               <th className="px-4 py-3 text-left text-sm font-semibold text-orange-800">Client Name</th>
               <th className="px-4 py-3 text-left text-sm font-semibold text-orange-800">Email</th>
               <th className="px-4 py-3 text-left text-sm font-semibold text-orange-800">Status</th>
@@ -50,6 +51,9 @@ export default function ReservationTable({ bookings, onApprove, onCancel, onClea
               <tr key={booking.id} className="hover:bg-orange-50 transition-colors">
                 <td className="px-4 py-3 text-sm text-orange-900">
                   {formatDate(booking.session_date)}
+                </td>
+                <td className="px-4 py-3 text-sm text-orange-900">
+                  {formatTimeLabel(booking.session_time) || '—'}
                 </td>
                 <td className="px-4 py-3 text-sm font-medium text-orange-900">
                   {booking.client_name}

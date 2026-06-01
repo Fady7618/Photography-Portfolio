@@ -1,22 +1,38 @@
 'use client'
 
 import { useState } from 'react'
-import { BookingCalendar, BookingForm } from '@/components/reservation'
+import { BookingCalendar, BookingForm, TimeSlotPicker } from '@/components/reservation'
 import { showAlert } from '@/utils/alert'
+import { formatTimeLabel } from '@/utils/formatters'
 
-type Step = 'calendar' | 'form' | 'success'
+type Step = 'calendar' | 'timeslot' | 'form' | 'success'
 
 export default function ReservationClient() {
   const [step, setStep] = useState<Step>('calendar')
   const [selectedDate, setSelectedDate] = useState<Date | undefined>()
+  const [selectedTime, setSelectedTime] = useState<string | null>(null)
   const [bookingsRefresh, setBookingsRefresh] = useState(0)
 
   function handleDateSelect(date: Date) {
     setSelectedDate(date)
+    setSelectedTime(null)
+    setStep('timeslot')
+  }
+
+  function handleTimeSelect(time: string) {
+    setSelectedTime(time)
     setStep('form')
   }
 
   if (step === 'success') {
+    const dateLabel = selectedDate?.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+    const timeLabel = selectedTime ? formatTimeLabel(selectedTime) : ''
+
     return (
       <div className="min-h-screen bg-orange-100 flex items-center justify-center px-4 py-12">
         <div className="max-w-md w-full bg-white rounded-xl shadow-xl p-8 text-center">
@@ -31,12 +47,8 @@ export default function ReservationClient() {
           <p className="text-orange-700 mb-6">
             Your request for{' '}
             <span className="font-semibold">
-              {selectedDate?.toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
+              {dateLabel}
+              {timeLabel ? ` at ${timeLabel}` : ''}
             </span>{' '}
             has been received. You will be contacted to confirm.
           </p>
@@ -44,12 +56,13 @@ export default function ReservationClient() {
             type="button"
             onClick={() => {
               setSelectedDate(undefined)
+              setSelectedTime(null)
               setBookingsRefresh((n) => n + 1)
               setStep('calendar')
             }}
             className="w-full bg-orange-800 hover:bg-orange-900 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
           >
-            Book Another Date
+            Book Another Session
           </button>
         </div>
       </div>
@@ -64,7 +77,9 @@ export default function ReservationClient() {
             Book a Session
           </h1>
           <p className="text-lg text-orange-700">
-            Select an available date to begin your booking
+            {step === 'calendar' && 'Select an available date to begin your booking'}
+            {step === 'timeslot' && 'Choose an available time slot'}
+            {step === 'form' && 'Complete your booking details'}
           </p>
         </div>
 
@@ -76,9 +91,19 @@ export default function ReservationClient() {
           />
         )}
 
-        {step === 'form' && selectedDate && (
+        {step === 'timeslot' && selectedDate && (
+          <TimeSlotPicker
+            selectedDate={selectedDate}
+            onSlotSelect={handleTimeSelect}
+            selectedTime={selectedTime}
+            onBack={() => setStep('calendar')}
+          />
+        )}
+
+        {step === 'form' && selectedDate && selectedTime && (
           <BookingForm
             selectedDate={selectedDate}
+            selectedTime={selectedTime}
             onSuccess={async () => {
               await showAlert.success(
                 'Booking Confirmed!',
@@ -87,10 +112,7 @@ export default function ReservationClient() {
               setBookingsRefresh((n) => n + 1)
               setStep('success')
             }}
-            onCancel={() => {
-              setSelectedDate(undefined)
-              setStep('calendar')
-            }}
+            onCancel={() => setStep('timeslot')}
           />
         )}
       </div>

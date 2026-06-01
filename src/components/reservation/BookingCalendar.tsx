@@ -41,6 +41,7 @@ export default function BookingCalendar({
   selectedDate,
   refreshTrigger = 0,
 }: BookingCalendarProps) {
+  const [fullyBookedSet, setFullyBookedSet] = useState<Set<string>>(new Set())
   const [statusByDate, setStatusByDate] = useState<Map<string, BookingStatus>>(new Map())
   const [loadedVersion, setLoadedVersion] = useState<number | null>(null)
   const loading = loadedVersion !== refreshTrigger
@@ -50,10 +51,14 @@ export default function BookingCalendar({
 
     fetch('/api/bookings')
       .then((res) => res.json())
-      .then(({ bookedDates: dates }) => {
+      .then((data) => {
         if (!active) return
+
+        const fullyBooked: string[] = data.fullyBookedDates ?? []
+        setFullyBookedSet(new Set(fullyBooked))
+
         const map = new Map<string, BookingStatus>()
-        for (const entry of dates ?? []) {
+        for (const entry of data.dateStatuses ?? []) {
           const iso = String(entry.date).split('T')[0]
           const status = String(entry.status).toLowerCase().trim()
           map.set(iso, status === 'confirmed' ? 'confirmed' : 'pending')
@@ -76,9 +81,9 @@ export default function BookingCalendar({
     return d
   }, [])
 
-  const isDateBooked = useCallback(
-    (date: Date) => statusByDate.has(toISODate(date)),
-    [statusByDate]
+  const isFullyBooked = useCallback(
+    (date: Date) => fullyBookedSet.has(toISODate(date)),
+    [fullyBookedSet]
   )
 
   const components = useMemo(
@@ -109,7 +114,7 @@ export default function BookingCalendar({
             mode="single"
             selected={selectedDate}
             onSelect={(date) => date && onDateSelect(date)}
-            disabled={[{ before: today }, isDateBooked]}
+            disabled={[{ before: today }, isFullyBooked]}
             components={components}
             className="rdp-custom w-full"
           />
