@@ -45,9 +45,9 @@ export default function HomeClient() {
           const t5 = gsap.timeline({})
           t5.fromTo(
             cameraRef.current,
-            { top: '0%', rotate: '0deg', opacity: 0, scale: 1 },
+            { top: '3%', rotate: '0deg', opacity: 0, scale: 1 },
             {
-              top: '0%',
+              top: '3%',
               rotate: '-25deg',
               opacity: 1,
               scale: 0.8,
@@ -70,7 +70,7 @@ export default function HomeClient() {
 
           t6.fromTo(
             cameraRef.current,
-            { top: '0%', rotate: '-25deg', scale: 0.8 },
+            { top: '3%', rotate: '-25deg', scale: 0.8 },
             {
               top: `${pricetop - 65}px`,
               left: '30%',
@@ -96,7 +96,7 @@ export default function HomeClient() {
             { top: `${pricetop - 65}px`, rotate: '25deg' },
             {
               top: `${showcasetop - 20}px`,
-              left: '-20%',
+              left: '-25%',
               rotate: '-30deg',
               duration: 0.5,
               ease: 'power2.inOut',
@@ -118,7 +118,7 @@ export default function HomeClient() {
             cameraRef.current,
             { top: `${showcasetop - 20}px`, rotate: '-30deg' },
             {
-              top: `${imagecenter}px`,
+              top: `${imagecenter - 150}px`,
               left: '0%',
               rotate: '0deg',
               scale: 1,
@@ -134,9 +134,6 @@ export default function HomeClient() {
             cameraRef.current,
             { scale: 1.3, rotate: '0deg', opacity: 0 , top: '5%'},
             {
-              // scale: isDesktop ? 0.8 : 1,
-              // rotate: '25deg',
-              // top: '5%',
               opacity: 1,
               duration: 1,
               delay: 0,
