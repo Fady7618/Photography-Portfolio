@@ -132,15 +132,25 @@ export default function HomeClient() {
           const t1 = gsap.timeline({})
           t1.fromTo(
             cameraRef.current,
-            { scale: 1, rotate: '0deg', opacity: 0 },
+            { scale: 1.3, rotate: '0deg', opacity: 0 , top: '5%'},
+            {
+              // scale: isDesktop ? 0.8 : 1,
+              // rotate: '25deg',
+              // top: '5%',
+              opacity: 1,
+              duration: 1,
+              delay: 0,
+              ease: 'power2.inOut',
+            }
+          )
+          t1.fromTo(cameraRef.current, 
+            {scale: 1.3, rotate: '0deg', opacity: 1 , top: '5%'},
             {
               scale: isDesktop ? 0.8 : 1,
               rotate: '25deg',
-              top: '5%',
-              opacity: 1,
-              duration: 1,
-              delay: 1,
               ease: 'power2.inOut',
+              duration: 1,
+              delay: 0,
             }
           )
 
@@ -195,7 +205,7 @@ export default function HomeClient() {
             { top: isDesktop ? '55%' : '60%', rotate: '80deg' },
             {
               top: isDesktop ? '77%' : '83%',
-              scale: 1,
+              scale: 1.2,
               rotate: '0deg',
               duration: 1,
               ease: 'power2.inOut',
