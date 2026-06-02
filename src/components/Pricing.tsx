@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { BookNowLink } from '@/components/auth';
 
 function Pricing() {
   return (
@@ -7,12 +7,11 @@ function Pricing() {
       <div className="w-full lg:w-1/3 h-full text-center lg:text-start flex flex-col justify-center items-center lg:items-start gap-5">
         <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-start uppercase rubik-dirtFont">intax fujifilm</h2>
         <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quisquam sed corrupti dolorum illum nostrum quasi, natus corporis saepe maiores, quae laudantium tenetur hic laborum, ducimus asperiores perspiciatis atque laboriosam rerum autem vel pariatur vero vitae. Laboriosam quas amet dolorum dolorem?</p>
-        <Link 
-          href="/reservation" 
+        <BookNowLink
           className="w-1/3 text-center bg-zinc-950 text-white p-2 rounded hover:bg-zinc-800 transition-colors"
-          title='Book Now'>
+        >
             Book Now
-        </Link>
+        </BookNowLink>
       </div>
       
       {/* Right Section */}

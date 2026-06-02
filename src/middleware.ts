@@ -1,10 +1,10 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { updateSession } from './src/lib/supabase-middleware'
+import { updateSession } from '@/lib/supabase-middleware'
 import {
   checkRateLimit,
   getClientIp,
   rateLimitConfigs,
-} from './src/lib/rate-limit'
+} from '@/lib/rate-limit'
 
 function applyRateLimit(
   request: NextRequest,

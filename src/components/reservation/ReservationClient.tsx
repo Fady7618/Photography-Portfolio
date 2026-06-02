@@ -1,17 +1,28 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { BookingCalendar, BookingForm, TimeSlotPicker } from '@/components/reservation'
+import { useAuth } from '@/hooks/useAuth'
+import { getLoginUrl, RESERVATION_PATH } from '@/lib/auth-redirect'
 import { showAlert } from '@/utils/alert'
 import { formatTimeLabel } from '@/utils/formatters'
 
 type Step = 'calendar' | 'timeslot' | 'form' | 'success'
 
 export default function ReservationClient() {
+  const router = useRouter()
+  const { isAuthenticated, loading } = useAuth()
   const [step, setStep] = useState<Step>('calendar')
   const [selectedDate, setSelectedDate] = useState<Date | undefined>()
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
   const [bookingsRefresh, setBookingsRefresh] = useState(0)
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      router.replace(getLoginUrl(RESERVATION_PATH))
+    }
+  }, [loading, isAuthenticated, router])
 
   function handleDateSelect(date: Date) {
     setSelectedDate(date)
@@ -22,6 +33,14 @@ export default function ReservationClient() {
   function handleTimeSelect(time: string) {
     setSelectedTime(time)
     setStep('form')
+  }
+
+  if (loading || !isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-orange-100 flex items-center justify-center px-4 py-12">
+        <p className="text-orange-700">Loading...</p>
+      </div>
+    )
   }
 
   if (step === 'success') {
