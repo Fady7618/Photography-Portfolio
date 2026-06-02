@@ -132,7 +132,7 @@ export default function HomeClient() {
           const t1 = gsap.timeline()
           t1.fromTo(
             cameraRef.current,
-            { scale: 1.8, rotate: 0, opacity: 0, top: '5%' },
+            { scale: isDesktop ? 1.8 : 1.2, rotate: 0, opacity: 0, top: '5%' },
             {
               opacity: 1,
               duration: 1,
@@ -141,7 +141,7 @@ export default function HomeClient() {
           )
           t1.fromTo(
             cameraRef.current,
-            { scale: 1.8, rotate: 0, opacity: 1, top: '5%' },
+            { scale: isDesktop ? 1.8 : 1.2, rotate: 0, opacity: 1, top: '5%' },
             {
               scale: isDesktop ? 1.5 : 1,
               rotate: 25,
