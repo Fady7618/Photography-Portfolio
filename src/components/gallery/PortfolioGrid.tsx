@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Images } from 'lucide-react'
 import { portfolioImages } from '@/data/portfolio'
 import type { PortfolioImage } from '@/data/portfolio'
@@ -23,12 +23,28 @@ export default function PortfolioGrid({ showSessionsLink = false }: PortfolioGri
       ? portfolioImages
       : portfolioImages.filter((img) => img.category === selectedCategory)
 
-  const categories: { id: Category; label: string }[] = [
-    { id: 'all', label: 'All' },
-    { id: 'wedding', label: 'Weddings' },
-    { id: 'portrait', label: 'Portraits' },
-    { id: 'event', label: 'Events' },
+  const categoryCounts = useMemo(
+    () => ({
+      all: portfolioImages.length,
+      wedding: portfolioImages.filter((img) => img.category === 'wedding').length,
+      portrait: portfolioImages.filter((img) => img.category === 'portrait').length,
+      event: portfolioImages.filter((img) => img.category === 'event').length,
+    }),
+    []
+  )
+
+  const allCategories: { id: Category; label: string; count: number }[] = [
+    { id: 'all', label: 'All', count: categoryCounts.all },
+    { id: 'wedding', label: 'Weddings', count: categoryCounts.wedding },
+    { id: 'portrait', label: 'Portraits', count: categoryCounts.portrait },
+    { id: 'event', label: 'Events', count: categoryCounts.event },
   ]
+  const categories = allCategories.filter(
+    (category) => category.id === 'all' || category.count > 0
+  )
+
+  const selectedCategoryLabel =
+    categories.find((category) => category.id === selectedCategory)?.label ?? 'All'
 
   function openModal(image: PortfolioImage) {
     const index = filteredImages.findIndex((img) => img.id === image.id)
@@ -64,19 +80,28 @@ export default function PortfolioGrid({ showSessionsLink = false }: PortfolioGri
                   : 'bg-white text-orange-800 hover:bg-orange-100 border border-orange-200'
               }`}
             >
-              {category.label}
+              {category.label} ({category.count})
             </button>
           ))}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <p className="text-center text-orange-700 mb-6">
+          {selectedCategoryLabel} collection - {filteredImages.length} photo
+          {filteredImages.length === 1 ? '' : 's'}
+        </p>
+
+        <div
+          key={selectedCategory}
+          className="columns-1 sm:columns-2 lg:columns-3 gap-6 animate-fadeIn"
+        >
           {filteredImages.map((image) => (
             <LazyImage
               key={image.id}
               src={image.src}
               alt={image.title}
               onClick={() => openModal(image)}
-              className="shadow-lg hover:shadow-xl transition-shadow duration-300"
+              className="shadow-lg hover:shadow-xl transition-all duration-300"
+              masonry
             />
           ))}
         </div>

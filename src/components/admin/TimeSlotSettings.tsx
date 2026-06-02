@@ -1,5 +1,6 @@
 'use client'
 
+import { Plus, Trash2 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
 const DEFAULT_SLOTS = ['10:00', '14:00', '18:00']
@@ -78,8 +79,10 @@ export default function TimeSlotSettings() {
             <button
               type="button"
               onClick={() => removeSlot(slot)}
-              className="text-sm text-red-600 hover:text-red-800 font-medium"
+              aria-label={`Remove ${slot} time slot`}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-white px-2.5 py-1.5 text-sm font-medium text-red-600 shadow-sm transition-all duration-200 ease-out hover:border-red-400 hover:bg-red-50 hover:text-red-700 hover:shadow-md active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-1"
             >
+              <Trash2 className="h-4 w-4" aria-hidden />
               Remove
             </button>
           </li>
@@ -96,9 +99,10 @@ export default function TimeSlotSettings() {
         <button
           type="button"
           onClick={addSlot}
-          className="px-4 py-2 bg-orange-100 text-orange-800 font-semibold rounded-lg hover:bg-orange-200 transition-colors"
+          className="inline-flex items-center gap-1.5 px-4 py-2 bg-orange-100 text-orange-800 font-semibold rounded-lg hover:bg-orange-200 transition-colors"
         >
-          Add Slot
+          <Plus className="h-4 w-4" aria-hidden />
+          <span>Add Slot</span>
         </button>
       </div>
 

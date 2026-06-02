@@ -10,10 +10,10 @@ const inputClass =
   'w-full px-4 py-3 border-2 border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all'
 
 const primaryBtnClass =
-  'inline-flex items-center justify-center gap-2 bg-orange-800 hover:bg-orange-900 disabled:bg-orange-300 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg'
+  'inline-flex items-center justify-center gap-2 bg-orange-800 hover:bg-orange-900 disabled:bg-orange-300 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer'
 
 const outlineBtnClass =
-  'inline-flex items-center justify-center gap-2 border-2 border-orange-800 text-orange-800 font-semibold py-2 px-4 rounded-lg hover:bg-orange-50 transition-all duration-300'
+  'inline-flex items-center justify-center gap-2 border-2 border-orange-800 text-orange-800 font-semibold py-2 px-4 rounded-lg hover:bg-orange-800 hover:text-orange-100 transition-all duration-300 cursor-pointer'
 
 export default function SessionManager() {
   const [sessions, setSessions] = useState<ClientSession[]>([])
