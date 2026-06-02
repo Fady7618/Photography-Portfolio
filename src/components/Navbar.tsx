@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Calendar, User, Menu, X, LogOut, LayoutDashboard } from 'lucide-react'
+import { BookNowLink } from '@/components/auth'
 import { useAuth } from '@/hooks/useAuth'
 import { useRouter } from 'next/navigation'
 
@@ -37,13 +38,12 @@ function Navbar() {
           </button>
 
           <div className="hidden lg:flex items-center space-x-4">
-            <Link 
-              href="/reservation"
+            <BookNowLink
               className="bg-orange-800 hover:bg-orange-900 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2"
             >
               <Calendar className="h-4 w-4" />
               <span>Book Now</span>
-            </Link>
+            </BookNowLink>
 
             {loading ? (
               <div className="bg-orange-800 text-white px-4 py-2 rounded-lg font-medium flex items-center space-x-2">
@@ -103,14 +103,13 @@ function Navbar() {
         {isMenuOpen && (
           <div className="lg:hidden absolute top-16 left-0 right-0 shadow-lg z-50 bg-white">
             <div className="flex flex-col space-y-3 p-4">
-              <Link 
-                href="/reservation"
+              <BookNowLink
                 className="bg-orange-800 hover:bg-orange-900 text-white px-4 py-3 rounded-lg font-medium transition-colors flex items-center space-x-2 justify-center"
                 onClick={() => setIsMenuOpen(false)}
               >
                 <Calendar className="h-4 w-4" />
                 <span>Book Now</span>
-              </Link>
+              </BookNowLink>
 
               {loading ? (
                 <div className="bg-orange-800 text-white px-4 py-3 rounded-lg font-medium flex items-center space-x-2 justify-center">
