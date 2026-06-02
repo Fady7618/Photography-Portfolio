@@ -10,6 +10,14 @@ const defaultConfig = {
   },
 }
 
+const toastConfig = {
+  toast: true,
+  position: 'top-end' as const,
+  showConfirmButton: false,
+  timer: 1500,
+  timerProgressBar: true,
+}
+
 export const showAlert = {
   success: (title: string, text?: string) => {
     return Swal.fire({
@@ -53,5 +61,13 @@ export const showAlert = {
       ...defaultConfig,
     })
     return result.isConfirmed
+  },
+
+  toast: (title: string, icon: 'info' | 'success' | 'warning' | 'error' = 'info') => {
+    return Swal.fire({
+      icon,
+      title,
+      ...toastConfig,
+    })
   },
 }

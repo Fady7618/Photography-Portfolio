@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Camera, Heart, Sparkles } from 'lucide-react'
+import { BookNowLink } from '@/components/auth'
 
 export const metadata: Metadata = {
   title: 'About',
@@ -93,12 +94,11 @@ export default function AboutPage() {
           <p className="text-orange-700 mb-6">
             Check availability and send a booking request — we typically respond within 24 hours.
           </p>
-          <Link
-            href="/reservation"
+          <BookNowLink
             className="inline-block bg-orange-800 hover:bg-orange-900 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
           >
             Book a Session
-          </Link>
+          </BookNowLink>
         </section>
       </div>
     </div>
