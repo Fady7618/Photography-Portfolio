@@ -24,9 +24,9 @@ export default function HomeClient() {
       mobile: 425,
       desktop: {
         min: 426,
-        max: 1448,
+        max: 1706.98,
       },
-      large: 1449,
+      large: 1707,
     }
 
     mm.add(
@@ -42,13 +42,13 @@ export default function HomeClient() {
         const isLarge = conditions.isLarge
 
         if (isMobile) {
-          const t5 = gsap.timeline({})
+          const t5 = gsap.timeline()
           t5.fromTo(
             cameraRef.current,
-            { top: '3%', rotate: '0deg', opacity: 0, scale: 1 },
+            { top: '3%', rotate: 0, opacity: 0, scale: 1 },
             {
               top: '3%',
-              rotate: '-25deg',
+              rotate: -25,
               opacity: 1,
               scale: 0.8,
               delay: 1,
@@ -70,12 +70,12 @@ export default function HomeClient() {
 
           t6.fromTo(
             cameraRef.current,
-            { top: '3%', rotate: '-25deg', scale: 0.8 },
+            { top: '3%', rotate: -25, scale: 0.8 },
             {
               top: `${pricetop - 65}px`,
               left: '30%',
               scale: 0.5,
-              rotate: '25deg',
+              rotate: 25,
               duration: 1,
               ease: 'power2.inOut',
             }
@@ -93,11 +93,11 @@ export default function HomeClient() {
           })
           t7.fromTo(
             cameraRef.current,
-            { top: `${pricetop - 65}px`, rotate: '25deg' },
+            { top: `${pricetop - 65}px`, rotate: 25 },
             {
               top: `${showcasetop - 20}px`,
               left: '-25%',
-              rotate: '-30deg',
+              rotate: -30,
               duration: 0.5,
               ease: 'power2.inOut',
             }
@@ -116,11 +116,11 @@ export default function HomeClient() {
           })
           t8.fromTo(
             cameraRef.current,
-            { top: `${showcasetop - 20}px`, rotate: '-30deg' },
+            { top: `${showcasetop - 20}px`, rotate: -30 },
             {
               top: `${imagecenter - 150}px`,
               left: '0%',
-              rotate: '0deg',
+              rotate: 0,
               scale: 1,
               duration: 0.5,
               ease: 'power2.inOut',
@@ -129,25 +129,24 @@ export default function HomeClient() {
         }
 
         if (isDesktop || isLarge) {
-          const t1 = gsap.timeline({})
+          const t1 = gsap.timeline()
           t1.fromTo(
             cameraRef.current,
-            { scale: 1.3, rotate: '0deg', opacity: 0 , top: '5%'},
+            { scale: 1.8, rotate: 0, opacity: 0, top: '5%' },
             {
               opacity: 1,
               duration: 1,
-              delay: 0,
               ease: 'power2.inOut',
             }
           )
-          t1.fromTo(cameraRef.current, 
-            {scale: 1.3, rotate: '0deg', opacity: 1 , top: '5%'},
+          t1.fromTo(
+            cameraRef.current,
+            { scale: 1.8, rotate: 0, opacity: 1, top: '5%' },
             {
-              scale: isDesktop ? 0.8 : 1,
-              rotate: '25deg',
+              scale: isDesktop ? 1.5 : 1,
+              rotate: 25,
               ease: 'power2.inOut',
               duration: 1,
-              delay: 0,
             }
           )
 
@@ -161,10 +160,10 @@ export default function HomeClient() {
           })
           t2.fromTo(
             cameraRef.current,
-            { top: '5%', rotate: '25deg' },
+            { top: '5%', rotate: 25 },
             {
-              rotate: '90deg',
-              top: isDesktop ? '29%' : '31%',
+              rotate: 90,
+              top: '31%',
               duration: 1,
               ease: 'power2.inOut',
             }
@@ -180,10 +179,10 @@ export default function HomeClient() {
           })
           t3.fromTo(
             cameraRef.current,
-            { top: isDesktop ? '29%' : '31%', rotate: '90deg' },
+            { top: '31%', rotate: 90 },
             {
-              top: isDesktop ? '55%' : '60%',
-              rotate: '80deg',
+              top: isDesktop ? '60%' : '58%',
+              rotate: 80,
               duration: 1,
               ease: 'power2.inOut',
             }
@@ -199,11 +198,11 @@ export default function HomeClient() {
           })
           t4.fromTo(
             cameraRef.current,
-            { top: isDesktop ? '55%' : '60%', rotate: '80deg' },
+            { top: isDesktop ? '60%' : '58%', rotate: 80 },
             {
-              top: isDesktop ? '77%' : '83%',
-              scale: 1.2,
-              rotate: '0deg',
+              top: '80%',
+              scale: isDesktop ? 1.8 : 1.2,
+              rotate: 0,
               duration: 1,
               ease: 'power2.inOut',
             }
@@ -217,7 +216,7 @@ export default function HomeClient() {
 
   return (
     <div className="flex flex-col items-center justify-center gap-4">
-      <div className="w-full absolute top-0 z-10" ref={cameraRef}>
+      <div className="w-full absolute top-0 z-20" ref={cameraRef}>
         <Camera />
       </div>
       <div className="w-full h-full" ref={heroRef}>

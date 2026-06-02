@@ -38,7 +38,7 @@ function Showcase({ priceRef }: ShowcaseProps) {
       <div className="w-full h-3/4 flex flex-col lg:flex-row justify-center lg:justify-between items-center" ref={containerRef}>
         <div className="w-full lg:w-1/3 h-full relative min-h-[200px]">
             <Image
-                src="/wedding.webp"
+                src="/wedding/martin-baron-BJrbQpEshtY-unsplash.jpg"
                 alt="Wedding showcase"
                 fill
                 className="w-full h-full object-contain object-center"
