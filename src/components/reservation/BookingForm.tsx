@@ -1,7 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useMutation } from '@/hooks/useMutation'
+import { useAuth } from '@/hooks/useAuth'
+import { getLoginUrl, RESERVATION_PATH } from '@/lib/auth-redirect'
 import { BookingFormData, Booking } from '@/types'
 import { formatTimeLabel, toISODate } from '@/utils/formatters'
 
@@ -18,6 +21,8 @@ export default function BookingForm({
   onSuccess,
   onCancel,
 }: BookingFormProps) {
+  const router = useRouter()
+  const { isAuthenticated } = useAuth()
   const [form, setForm] = useState({ client_name: '', client_email: '', notes: '' })
   const { loading, error, mutate } = useMutation<Booking, BookingFormData>('/api/bookings')
 
@@ -32,14 +37,27 @@ export default function BookingForm({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 
+    if (!isAuthenticated) {
+      router.push(getLoginUrl(RESERVATION_PATH))
+      return
+    }
+
     const payload: BookingFormData = {
       ...form,
       session_date: toISODate(selectedDate),
       session_time: selectedTime,
     }
 
-    const result = await mutate(payload)
-    if (result) onSuccess()
+    const { data, status } = await mutate(payload)
+
+    if (data) {
+      onSuccess()
+      return
+    }
+
+    if (status === 401) {
+      router.push(getLoginUrl(RESERVATION_PATH))
+    }
   }
 
   return (

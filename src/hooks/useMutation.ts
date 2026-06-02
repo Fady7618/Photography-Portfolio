@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 
 type MutationState<T> = {
@@ -10,6 +12,11 @@ type MutateOptions = {
   method?: 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 }
 
+type MutationResult<T> = {
+  data: T | null
+  status: number
+}
+
 export function useMutation<TData, TInput>(
   url: string,
   options: MutateOptions = {}
@@ -20,7 +27,7 @@ export function useMutation<TData, TInput>(
     error: null,
   })
 
-  async function mutate(input: TInput): Promise<TData | null> {
+  async function mutate(input: TInput): Promise<MutationResult<TData>> {
     setState({ data: null, loading: true, error: null })
 
     try {
@@ -33,16 +40,20 @@ export function useMutation<TData, TInput>(
       const json = await res.json()
 
       if (!res.ok) {
-        setState({ data: null, loading: false, error: json.error ?? 'Request failed' })
-        return null
+        setState({
+          data: null,
+          loading: false,
+          error: json.error ?? 'Request failed',
+        })
+        return { data: null, status: res.status }
       }
 
       setState({ data: json, loading: false, error: null })
-      return json
+      return { data: json, status: res.status }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Network error'
       setState({ data: null, loading: false, error: message })
-      return null
+      return { data: null, status: 0 }
     }
   }
 

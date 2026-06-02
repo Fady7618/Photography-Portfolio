@@ -1,14 +1,21 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { createClient } from '@/lib/supabase'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 interface AuthFormProps {
   mode: 'login' | 'register'
 }
 
-export default function AuthForm({ mode }: AuthFormProps) {
+function getSafeRedirectPath(redirect: string | null): string {
+  if (!redirect || !redirect.startsWith('/') || redirect.startsWith('//')) {
+    return '/'
+  }
+  return redirect
+}
+
+function AuthFormContent({ mode }: AuthFormProps) {
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
@@ -17,7 +24,9 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+  const searchParams = useSearchParams()
   const supabase = createClient()
+  const redirectTo = getSafeRedirectPath(searchParams.get('redirect'))
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -37,9 +46,6 @@ export default function AuthForm({ mode }: AuthFormProps) {
         })
 
         if (signUpError) throw signUpError
-
-        router.push('/')
-        router.refresh()
       } else {
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email: formData.email,
@@ -47,10 +53,10 @@ export default function AuthForm({ mode }: AuthFormProps) {
         })
 
         if (signInError) throw signInError
-
-        router.push('/')
-        router.refresh()
       }
+
+      router.push(redirectTo)
+      router.refresh()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
       setLoading(false)
@@ -121,5 +127,17 @@ export default function AuthForm({ mode }: AuthFormProps) {
         {loading ? 'Loading...' : mode === 'login' ? 'Sign In' : 'Sign Up'}
       </button>
     </form>
+  )
+}
+
+export default function AuthForm(props: AuthFormProps) {
+  return (
+    <Suspense
+      fallback={
+        <div className="w-full max-w-md py-12 text-center text-orange-700">Loading...</div>
+      }
+    >
+      <AuthFormContent {...props} />
+    </Suspense>
   )
 }

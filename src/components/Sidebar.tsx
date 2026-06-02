@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Image as ImageIcon, Calendar, User, Home, LayoutDashboard } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { BookNowLink } from '@/components/auth'
 import { useAuth } from '@/hooks/useAuth'
 
 function Sidebar() {
@@ -44,16 +45,15 @@ function Sidebar() {
             <ImageIcon size={24} absoluteStrokeWidth={true}/>
             <span className="capitalize">gallery</span>
           </Link>
-          <Link
-            href="/reservation"
+          <BookNowLink
             className={`p-2 rounded-lg flex flex-col text-sm lg:text-lg justify-center items-center transition-colors
-                      ${activePath === '/reservation' 
-                        ? 'bg-orange-100' 
+                      ${activePath === '/reservation'
+                        ? 'bg-orange-100'
                         : 'text-white'}`}
-            title='Reservation'>
+          >
             <Calendar size={24} absoluteStrokeWidth={true}/>
             <span className="capitalize">reservation</span>
-          </Link>
+          </BookNowLink>
           {!loading && isAdmin && (
             <Link
               href="/admin"
@@ -102,16 +102,15 @@ function Sidebar() {
             title='Gallery'>
             <ImageIcon size={24} absoluteStrokeWidth={true}/>
           </Link>
-          <Link
-            href="/reservation"
+          <BookNowLink
             onClick={() => handleNavClick('/reservation')}
             className={`p-2 rounded-lg flex place-content-center gap-2 transition-colors
-                      ${activePath === '/reservation' 
-                        ? 'bg-orange-100' 
+                      ${activePath === '/reservation'
+                        ? 'bg-orange-100'
                         : 'text-white hover:bg-orange-600 hover:text-white'}`}
-            title='Reservation'>
+          >
             <Calendar size={24} absoluteStrokeWidth={true}/>
-          </Link>
+          </BookNowLink>
           {!loading && isAdmin && (
             <Link
               href="/admin"
