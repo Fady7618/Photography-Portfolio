@@ -50,7 +50,8 @@ export async function middleware(request: NextRequest) {
 
   if (
     url.pathname.startsWith('/auth/login') ||
-    url.pathname.startsWith('/auth/register')
+    url.pathname.startsWith('/auth/register') ||
+    url.pathname.startsWith('/auth/verify-otp')
   ) {
     if (user) {
       url.pathname = '/'
