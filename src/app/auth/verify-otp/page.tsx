@@ -1,13 +1,21 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useSyncExternalStore } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
 
+function subscribeNoop() {
+  return () => {}
+}
+
+function getPendingEmail(): string | null {
+  return sessionStorage.getItem('pending_verification_email')
+}
+
 export default function VerifyOTPPage() {
   const router = useRouter()
-  const [email, setEmail] = useState('')
+  const email = useSyncExternalStore(subscribeNoop, getPendingEmail, () => null)
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -17,13 +25,10 @@ export default function VerifyOTPPage() {
   const supabase = createClient()
 
   useEffect(() => {
-    const pending = sessionStorage.getItem('pending_verification_email')
-    if (!pending) {
+    if (!email) {
       router.push('/auth/register')
-      return
     }
-    setEmail(pending)
-  }, [router])
+  }, [email, router])
 
   function handleDigitChange(index: number, value: string) {
     if (!/^\d*$/.test(value)) return
@@ -53,6 +58,8 @@ export default function VerifyOTPPage() {
   }
 
   async function handleVerify() {
+    if (!email) return
+
     const token = otp.join('')
     if (token.length !== 6) {
       setError('Please enter all 6 digits')
@@ -79,6 +86,8 @@ export default function VerifyOTPPage() {
   }
 
   async function handleResend() {
+    if (!email) return
+
     setResending(true)
     setError(null)
 
@@ -96,6 +105,14 @@ export default function VerifyOTPPage() {
 
     setResent(true)
     setTimeout(() => setResent(false), 30000)
+  }
+
+  if (!email) {
+    return (
+      <div className="min-h-screen bg-orange-100 flex items-center justify-center px-4 py-12">
+        <p className="text-orange-700">Redirecting...</p>
+      </div>
+    )
   }
 
   return (
