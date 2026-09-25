@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { Camera, Heart, Sparkles } from 'lucide-react'
 import { BookNowLink } from '@/components/auth'
 

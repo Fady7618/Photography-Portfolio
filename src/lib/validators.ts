@@ -4,7 +4,7 @@ import { AppError } from './api-helpers'
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const TIME_REGEX = /^\d{2}:\d{2}$/
 
-function isValidEmail(email: string): boolean {
+export function isValidEmail(email: string): boolean {
   return EMAIL_REGEX.test(email)
 }
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { Suspense, useState } from 'react'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
 import { useRouter, useSearchParams } from 'next/navigation'
 
@@ -46,13 +47,25 @@ function AuthFormContent({ mode }: AuthFormProps) {
         })
 
         if (signUpError) throw signUpError
+
+        sessionStorage.setItem('pending_verification_email', formData.email)
+        router.push('/auth/verify-otp')
+        return
       } else {
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email: formData.email,
           password: formData.password,
         })
 
-        if (signInError) throw signInError
+        if (signInError) {
+          if (signInError.message.toLowerCase().includes('email not confirmed')) {
+            await supabase.auth.resend({ type: 'signup', email: formData.email })
+            sessionStorage.setItem('pending_verification_email', formData.email)
+            router.push('/auth/verify-otp')
+            return
+          }
+          throw signInError
+        }
       }
 
       router.push(redirectTo)
@@ -111,6 +124,16 @@ function AuthFormContent({ mode }: AuthFormProps) {
           placeholder="••••••••"
           minLength={6}
         />
+        {mode === 'login' && (
+          <div className="text-right mt-1">
+            <Link
+              href="/auth/forgot-password"
+              className="text-orange-600 text-sm hover:underline"
+            >
+              Forgot password?
+            </Link>
+          </div>
+        )}
       </div>
 
       {error && (
